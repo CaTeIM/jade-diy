@@ -17,7 +17,7 @@
           "offset": 57344
         },
         {
-          "path": "https://cateim.github.io/jade-diy/firmware/jade_secure.bin",
+          "path": "https://cateim.github.io/jade-diy/firmware/jade.bin",
           "offset": 65536
         }
       ]
