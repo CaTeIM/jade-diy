@@ -1,6 +1,6 @@
-# 🔱 Atualizador Jade DIY
-
 ![Firmware](https://img.shields.io/badge/Firmware-v1.0.35--sb-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V1%20Ready-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
+# 🔱 Atualizador Jade DIY
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/cateim/jade-diy/main/assets/jade_logo_white_on_transparent_rgb.svg" alt="Logo da Jade" width="250"/>
