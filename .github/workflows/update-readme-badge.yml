@@ -1,0 +1,47 @@
+# Nome da nossa automação
+name: Update Firmware Version Badge
+
+on:
+  # Aciona a automação em qualquer push para a branch 'main'
+  push:
+    branches:
+      - main
+
+jobs:
+  update-badge:
+    # Só roda se o commit não for do próprio bot (para evitar loops)
+    if: "contains(github.event.head_commit.message, '[bot]') == false"
+
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Baixa o código do seu repositório
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. A MÁGICA: Acha a última versão de firmware no index.html
+      - name: Get latest firmware version
+        id: get_version
+        run: |
+          # Procura por 'version': '...', pega a última linha, e extrai só o texto da versão
+          LATEST_VERSION=$(grep -o "'version': '[^']*'" index.html | tail -n 1 | sed "s/'version': '//;s/'//")
+          echo "Found version: $LATEST_VERSION"
+          # O site shields.io usa '--' para representar um '-', então a gente substitui
+          BADGE_VERSION=$(echo $LATEST_VERSION | sed 's/-/--/g')
+          echo "Badge version: $BADGE_VERSION"
+          # Salva a versão para usar no próximo passo
+          echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          echo "badge_version=$BADGE_VERSION" >> $GITHUB_OUTPUT
+
+      # 3. Atualiza o README.md com a nova versão
+      - name: Update README.md
+        run: |
+          # Usa o 'sed' para encontrar a linha do badge e substituir a versão antiga pela nova
+          sed -i "s|img.shields.io/badge/Firmware-.*-blue|img.shields.io/badge/Firmware-${{ steps.get_version.outputs.badge_version }}-blue|g" README.md
+
+      # 4. Faz o commit e push das mudanças no README.md
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(bot): Auto-update firmware badge to v${{ steps.get_version.outputs.version }}"
+          branch: main
+          file_pattern: README.md
