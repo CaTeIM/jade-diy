@@ -1,4 +1,4 @@
-![Firmware](https://img.shields.io/badge/Firmware-v1.0.35--sb-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V1%20Ready-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Firmware](https://img.shields.io/badge/Firmware--blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V1%20Ready-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 # 🔱 Atualizador Jade DIY
 
