@@ -7,6 +7,10 @@ on:
     branches:
       - main
 
+# Adiciona a permissão de escrita para o bot poder fazer o commit
+permissions:
+  contents: write
+
 jobs:
   update-badge:
     # Só roda se o commit não for do próprio bot (para evitar loops)
