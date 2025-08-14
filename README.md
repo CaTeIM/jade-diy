@@ -1,6 +1,6 @@
 # 🔱 Atualizador Jade DIY com Secure Boot
 
-![Firmware](https://img.shields.io/badge/Firmware-1.0.35--v1--sb-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V2-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Firmware](https://img.shields.io/badge/Firmware-1.0.35--v1--sb-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V1-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 <p align="center">
   <a href="" target="_blank" rel="noopener noreferrer">
@@ -15,7 +15,7 @@ Uma ferramenta web simples e oficial para atualizar o firmware da sua **Jade DIY
 
 Esta ferramenta foi feita para um propósito **muito específico**. Leia com atenção para saber se ela é para você:
 
-* ✅ **Você comprou uma Jade DIY conosco** que já veio com **Secure Boot V2 ativado**.
+* ✅ **Você comprou uma Jade DIY conosco** que já veio com **Secure Boot V1 ativado**.
 * ✅ Você quer **ATUALIZAR** o firmware para uma nova versão oficial que estamos disponibilizando.
 * ✅ Você está ciente de que o dispositivo foi selado com uma chave de segurança única.
 
@@ -66,7 +66,7 @@ Quer customizar ou adicionar seus próprios firmwares? Moleza.
 
 2.  **Adicionar uma Nova Versão:**
     * Crie a estrutura de pastas acima.
-    * Gere os 4 arquivos `.bin` usando o ESP-IDF v5.4, com as configurações corretas e assinado com sua chave V2.
+    * Gere os 4 arquivos `.bin` usando o ESP-IDF v5.4, com as configurações corretas e assinado com sua chave V1.
     * Crie um `manifest.json` dentro da pasta com os caminhos relativos.
     * Abra o `index.html` e adicione a nova versão no objeto `firmwares` dentro da tag `<script>`.
 
