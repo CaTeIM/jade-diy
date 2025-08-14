@@ -13,8 +13,9 @@ permissions:
 
 jobs:
   update-badge:
-    # Só roda se o commit não for do próprio bot (para evitar loops)
-    if: contains(github.event.head_commit.message, '[bot]') == false
+    # ATUALIZADO: Sintaxe do 'if' corrigida para o padrão do GitHub Actions.
+    # Ele agora checa se a mensagem NÃO contém 'Bot:'.
+    if: "${{ !contains(github.event.head_commit.message, 'Bot:') }}"
 
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +29,12 @@ jobs:
         run: |
           # Procura por 'version': '...', pega a última linha, e extrai só o texto da versão
           LATEST_VERSION=$(grep -o "'version': '[^']*'" index.html | tail -n 1 | sed "s/'version': '//;s/'//")
+          
+          # Se não encontrar nenhuma versão, usa um valor padrão
+          if [ -z "$LATEST_VERSION" ]; then
+            LATEST_VERSION="not-found"
+          fi
+          
           echo "Found version: $LATEST_VERSION"
           # O site shields.io usa '--' para representar um '-', então a gente substitui
           BADGE_VERSION=$(echo $LATEST_VERSION | sed 's/-/--/g')
@@ -46,6 +53,7 @@ jobs:
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "docs(bot): Auto-update firmware badge to v${{ steps.get_version.outputs.version }}"
+          # Mensagem de commit agora bate com a regra do 'if'
+          commit_message: "Bot: Auto-update firmware badge to v${{ steps.get_version.outputs.version }}"
           branch: main
           file_pattern: README.md
