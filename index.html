@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Atualizador de Firmware - Jade DIY</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+    .container { max-width: 600px; margin: auto; }
+    .instructions { text-align: left; background-color: #f0f0f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;}
+    esp-web-install-button { --esp-web-install-button-fill-color: #007bff; }
+  </style>
+  
+  <script type="module" src="https://unpkg.com/esp-web-tools@9/dist/web/install-button.js?module"></script>
+
+</head>
+<body>
+
+  <div class="container">
+    <h1>Atualizador de Firmware para Jade DIY</h1>
+    <p>Siga os passos abaixo para atualizar sua carteira.</p>
+
+    <div class="instructions">
+      <h3>Instruções:</h3>
+      <ol>
+        <li>Conecte sua Jade ao computador com o cabo USB.</li>
+        <li><strong>Pressione e segure o botão superior</strong> (o da 'rodinha') e mantenha-o pressionado.</li>
+        <li>Com o botão pressionado, clique no botão "INSTALAR" abaixo.</li>
+        <li>Uma janela pop-up vai aparecer. Selecione a porta "USB/Serial" e clique em "Conectar".</li>
+      </ol>
+      <p>O processo de atualização começará automaticamente. Não desconecte o cabo até finalizar!</p>
+    </div>
+
+    <esp-web-install-button manifest="manifest.json"></esp-web-install-button>
+  </div>
+
+</body>
+</html>
