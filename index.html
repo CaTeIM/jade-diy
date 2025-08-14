@@ -2,12 +2,47 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Atualizador de Firmware - Jade DIY</title>
+  <title>Atualizador para LILYGO T-Display (Jade)</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-    .container { max-width: 600px; margin: auto; }
-    .instructions { text-align: left; background-color: #f0f0f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;}
-    esp-web-install-button { --esp-web-install-button-fill-color: #007bff; }
+    /* Estilo aprimorado para um visual mais limpo */
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      text-align: center; 
+      padding: 20px;
+      background-color: #f4f7f6;
+      color: #333;
+    }
+    .container { 
+      max-width: 650px; 
+      margin: auto; 
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .instructions { 
+      text-align: left; 
+      background-color: #eaf2ff; 
+      padding: 20px; 
+      border-radius: 8px; 
+      margin-top: 25px;
+      margin-bottom: 25px;
+      border-left: 5px solid #007bff;
+    }
+    .instructions h3 {
+      margin-top: 0;
+    }
+    .security-note {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #28a745; /* Verde para indicar segurança */
+    }
+    /* Botão de instalação com a cor primária */
+    esp-web-install-button { 
+      --esp-web-install-button-fill-color: #007bff; 
+      --esp-web-install-button-text-color: #ffffff;
+      margin-top: 10px;
+    }
   </style>
   
   <script type="module" src="https://unpkg.com/esp-web-tools@9/dist/web/install-button.js?module"></script>
@@ -16,21 +51,25 @@
 <body>
 
   <div class="container">
-    <h1>Atualizador de Firmware para Jade DIY</h1>
-    <p>Siga os passos abaixo para atualizar sua carteira.</p>
+    <img src="https://avatars.githubusercontent.com/u/48855650?s=200&v=4" alt="Logo LILYGO" width="80">
+    <h1>Atualizador de Firmware para LILYGO T-Display</h1>
+    <p>Use esta página para instalar a versão mais recente e segura do firmware Jade no seu dispositivo.</p>
 
     <div class="instructions">
-      <h3>Instruções:</h3>
+      <h3>Passo a Passo Simples</h3>
       <ol>
-        <li>Conecte sua Jade ao computador com o cabo USB.</li>
-        <li><strong>Pressione e segure o botão superior</strong> (o da 'rodinha') e mantenha-o pressionado.</li>
-        <li>Com o botão pressionado, clique no botão "INSTALAR" abaixo.</li>
-        <li>Uma janela pop-up vai aparecer. Selecione a porta "USB/Serial" e clique em "Conectar".</li>
+        <li>Conecte sua LILYGO T-Display ao computador usando um <strong>cabo USB de dados</strong> de boa qualidade.</li>
+        <li>Clique no botão "INSTALAR" abaixo.</li>
+        <li>Uma pequena janela vai aparecer no topo do seu navegador. Selecione a porta serial correspondente ao seu dispositivo (geralmente "USB Serial" ou "COMX") e clique em "Conectar".</li>
       </ol>
-      <p>O processo de atualização começará automaticamente. Não desconecte o cabo até finalizar!</p>
+      <p>Aguarde o processo terminar. É rápido e automático!</p>
     </div>
 
     <esp-web-install-button manifest="manifest.json"></esp-web-install-button>
+
+    <p class="security-note">
+      <strong>🔒 Firmware Assinado Digitalmente:</strong> Fique tranquilo! O firmware que será instalado é verificado e assinado digitalmente, garantindo que é autêntico, seguro e não foi modificado.
+    </p>
   </div>
 
 </body>
