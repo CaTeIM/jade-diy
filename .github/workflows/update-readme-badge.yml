@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   update-badge:
-    # ATUALIZADO: Sintaxe do 'if' corrigida para o padrão do GitHub Actions.
+    # Sintaxe do 'if' corrigida para o padrão do GitHub Actions.
     # Ele agora checa se a mensagem NÃO contém 'Bot:'.
     if: "${{ !contains(github.event.head_commit.message, 'Bot:') }}"
 
@@ -27,8 +27,8 @@ jobs:
       - name: Get latest firmware version
         id: get_version
         run: |
-          # Procura por 'version': '...', pega a última linha, e extrai só o texto da versão
-          LATEST_VERSION=$(grep -o "'version': '[^']*'" index.html | tail -n 1 | sed "s/'version': '//;s/'//")
+          # Procura por version: '...', pega a última linha, e extrai só o texto da versão
+          LATEST_VERSION=$(grep -o "version: *'[^']*'" index.html | tail -n 1 | sed "s/version: *'//;s/'$//")
           
           # Se não encontrar nenhuma versão, usa um valor padrão
           if [ -z "$LATEST_VERSION" ]; then
