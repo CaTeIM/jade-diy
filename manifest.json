@@ -10,11 +10,11 @@
         },
         {
           "path": "https://cateim.github.io/jade-diy/firmware/partition-table.bin",
-          "offset": 32768
+          "offset": 36864
         },
         {
           "path": "https://cateim.github.io/jade-diy/firmware/ota_data_initial.bin",
-          "offset": 53248
+          "offset": 57344
         },
         {
           "path": "https://cateim.github.io/jade-diy/firmware/jade_secure.bin",
