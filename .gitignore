@@ -140,3 +140,4 @@ vite.config.ts.timestamp-*
 
 # Arquivos para documentação do projeto
 assinar_secure_boot.md
+deploy_firmware.ps1
