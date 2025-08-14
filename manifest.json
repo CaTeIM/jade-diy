@@ -1,0 +1,14 @@
+{
+  "name": "Atualizador Jade DIY",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        {
+          "path": "https://cateim.github.io/jade-diy/firmware/jade_secure.bin",
+          "offset": 65536
+        }
+      ]
+    }
+  ]
+}
