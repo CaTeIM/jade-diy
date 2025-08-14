@@ -1,5 +1,5 @@
 {
-  "name": "LILYGO TTGO T-Display Jade DIY",
+  "name": "LILYGO/TTGO T-Display",
   "builds": [
     {
       "chipFamily": "ESP32",
