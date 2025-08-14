@@ -27,8 +27,8 @@ jobs:
       - name: Get latest firmware version
         id: get_version
         run: |
-          # Procura por version: '...', pega a última linha, e extrai só o texto da versão
-          LATEST_VERSION=$(grep -o "version: *'[^']*'" index.html | tail -n 1 | sed "s/version: *'//;s/'$//")
+          # ATUALIZADO: Agora ele primeiro remove as entradas comentadas (//) e DEPOIS procura pela última versão.
+          LATEST_VERSION=$(grep -v "^ *//" index.html | grep -o "version: *'[^']*'" | tail -n 1 | sed "s/version: *'//;s/'$//")
           
           # Se não encontrar nenhuma versão, usa um valor padrão
           if [ -z "$LATEST_VERSION" ]; then
