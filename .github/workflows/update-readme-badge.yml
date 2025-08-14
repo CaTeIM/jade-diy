@@ -14,7 +14,7 @@ permissions:
 jobs:
   update-badge:
     # Só roda se o commit não for do próprio bot (para evitar loops)
-    if: "contains(github.event.head_commit.message, '[bot]') == false"
+    if: contains(github.event.head_commit.message, '[bot]') == false
 
     runs-on: ubuntu-latest
     steps:
