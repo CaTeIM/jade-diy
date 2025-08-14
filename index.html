@@ -1,76 +1,192 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Atualizador LILYGO/TTGO T-Display - Jade DIY</title>
-  <style>
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      text-align: center; 
-      padding: 20px;
-      background-color: #f4f7f6;
-      color: #333;
-    }
-    .container { 
-      max-width: 650px; 
-      margin: auto; 
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .instructions { 
-      text-align: left; 
-      background-color: #eaf2ff; 
-      padding: 20px; 
-      border-radius: 8px; 
-      margin-top: 25px;
-      margin-bottom: 25px;
-      border-left: 5px solid #007bff;
-    }
-    .instructions h3 {
-      margin-top: 0;
-    }
-    .security-note {
-      margin-top: 20px;
-      font-size: 0.9em;
-      color: #28a745; /* Verde para indicar segurança */
-    }
-    /* Botão de instalação com a cor primária */
-    esp-web-install-button { 
-      --esp-web-install-button-fill-color: #007bff; 
-      --esp-web-install-button-text-color: #ffffff;
-      margin-top: 10px;
-    }
-  </style>
-  
-  <script type="module" src="https://unpkg.com/esp-web-tools@9/dist/web/install-button.js?module"></script>
+    <meta charset="UTF-8">
+    <title>Atualizador Jade DIY - Secure Boot</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            margin-bottom: 25px;
+        }
+        .header img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 10px;
+        }
+        .selector-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .selector-group select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            background-color: #f9f9f9;
+        }
+        .instructions {
+            text-align: left;
+            background-color: #eaf2ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #007bff;
+        }
+        .instructions h3 {
+            margin-top: 0;
+        }
+        .warning {
+            background-color: #fffbe6;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+        .security-note {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #28a745;
+        }
+        esp-web-install-button {
+            --esp-web-install-button-fill-color: #007bff;
+            --esp-web-install-button-text-color: #ffffff;
+            margin-top: 10px;
+        }
+        #installButton {
+            display: none; /* O botão começa escondido */
+        }
+    </style>
 
+    <script type="module" src="https://unpkg.com/esp-web-tools@9/dist/web/install-button.js?module"></script>
 </head>
 <body>
 
-  <div class="container">
-    <img src="assets/jade_emblem_on_dark_rgb.png" alt="Logo Jade" width="80">
-    <h1>Atualizador de Firmware 
-    </br>LILYGO/TTGO T-Display</h1>
-    <p>Use esta página para instalar a versão mais recente e segura do firmware Jade DIY no seu dispositivo.</p>
+    <div class="container">
+        <div class="header">
+            <img src="assets/jade_emblem_on_dark_rgb.png" alt="Logo Jade">
+            <h1>Atualizador de Firmware Jade DIY</h1>
+            <p>Para dispositivos com <strong>Secure Boot V1</strong> já ativado.</p>
+        </div>
 
-    <div class="instructions">
-      <h3>Passo a Passo Simples</h3>
-      <ol>
-        <li>Conecte sua LILYGO/TTGO T-Display ao computador usando um <strong>cabo USB de dados</strong> de boa qualidade.</li>
-        <li>Clique no botão "INSTALAR" abaixo.</li>
-        <li>Uma pequena janela vai aparecer no topo do seu navegador. Selecione a porta serial correspondente ao seu dispositivo (geralmente "USB Serial" ou "COMX") e clique em "Conectar".</li>
-      </ol>
-      <p>Aguarde o processo terminar. É rápido e automático!</p>
+        <div class="selector-group">
+            <div>
+                <label for="device-select">Selecione o Dispositivo:</label><br>
+                <select id="device-select">
+                    <option value="">-- Escolha sua placa --</option>
+                    <option value="tdisplay">LILYGO TTGO T-Display</option>
+                    <!-- Adicione outras placas aqui no futuro -->
+                    <!-- <option value="m5stickc">M5Stick-C Plus</option> -->
+                </select>
+            </div>
+            <div>
+                <label for="firmware-select">Selecione a Versão:</label><br>
+                <select id="firmware-select" disabled>
+                    <option value="">-- Escolha o firmware --</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- O botão de instalação agora tem um ID para ser controlado pelo JS -->
+        <esp-web-install-button id="installButton" no-erase></esp-web-install-button>
+
+        <div id="instructions-box" class="instructions warning" style="display: none;">
+             <h3>⚠️ Atenção!</h3>
+             <p>Esta ferramenta é apenas para <strong>ATUALIZAR</strong> um dispositivo que <strong>JÁ POSSUI SECURE BOOT ATIVADO</strong> com a sua chave. Ela <strong>NÃO</strong> vai ativar o Secure Boot em uma placa nova.</p>
+        </div>
+
+        <div class="instructions">
+            <h3>Passo a Passo</h3>
+            <ol>
+                <li>Escolha seu dispositivo e a versão do firmware nos menus acima.</li>
+                <li>Conecte sua placa ao computador com um <strong>cabo USB de dados</strong>.</li>
+                <li>Clique no botão "INSTALAR" que apareceu.</li>
+                <li>Na janela que abrir, selecione a porta serial ("USB Serial" ou "COMX") e clique em "Conectar".</li>
+            </ol>
+        </div>
+
+        <p class="security-note">
+            <strong>🔒 Firmware Assinado Digitalmente:</strong> O firmware instalado é verificado e assinado, garantindo sua autenticidade e segurança.
+        </p>
     </div>
 
-    <esp-web-install-button manifest="manifest.json" no-erase></esp-web-install-button>
+    <script>
+        // --- Lógica do nosso Flasher Inteligente ---
 
-    <p class="security-note">
-      <strong>🔒 Firmware Assinado Digitalmente:</strong> Fique tranquilo! O firmware que será instalado é verificado e assinado digitalmente, garantindo que é autêntico, seguro e não foi modificado.
-    </p>
-  </div>
+        const deviceSelect = document.getElementById('device-select');
+        const firmwareSelect = document.getElementById('firmware-select');
+        const installButton = document.getElementById('installButton');
+        const instructionsBox = document.getElementById('instructions-box');
+
+        // Nosso "banco de dados" de firmwares.
+        // Adicione novas versões aqui e a página se atualiza sozinha!
+        const firmwares = {
+            tdisplay: [
+                { version: '1.0.35-v1-sb', path: 'firmware/tdisplay/1.0.35-v1-sb/manifest.json' },
+                // { version: '1.0.36-v1-sb', path: 'firmware/tdisplay/1.0.36-v1-sb/manifest.json' },
+            ],
+            // m5stickc: [
+            //     { version: '1.0.35-v1-sb', path: 'firmware/m5stickc/1.0.35-v1-sb/manifest.json' },
+            // ]
+        };
+
+        // Quando o usuário escolhe um dispositivo...
+        deviceSelect.addEventListener('change', () => {
+            const selectedDevice = deviceSelect.value;
+            
+            // Limpa e desativa o menu de firmware
+            firmwareSelect.innerHTML = '<option value="">-- Escolha o firmware --</option>';
+            firmwareSelect.disabled = true;
+            installButton.style.display = 'none';
+            instructionsBox.style.display = 'none';
+
+            if (selectedDevice && firmwares[selectedDevice]) {
+                // Preenche o menu de firmware com as versões disponíveis
+                firmwares[selectedDevice].forEach(fw => {
+                    const option = document.createElement('option');
+                    option.value = fw.path;
+                    option.textContent = fw.version;
+                    firmwareSelect.appendChild(option);
+                });
+                firmwareSelect.disabled = false;
+            }
+        });
+
+        // Quando o usuário escolhe uma versão de firmware...
+        firmwareSelect.addEventListener('change', () => {
+            const selectedFirmwarePath = firmwareSelect.value;
+
+            if (selectedFirmwarePath) {
+                // Atribui o manifest.json correto ao botão e o exibe
+                installButton.manifest = selectedFirmwarePath;
+                installButton.style.display = 'inline-block';
+                instructionsBox.style.display = 'block';
+            } else {
+                installButton.style.display = 'none';
+                instructionsBox.style.display = 'none';
+            }
+        });
+    </script>
 
 </body>
 </html>

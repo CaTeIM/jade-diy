@@ -1,25 +1,13 @@
 {
-  "name": "LILYGO/TTGO T-Display",
+  "name": "Jade DIY 1.0.35 for T-Display",
   "builds": [
     {
       "chipFamily": "ESP32",
       "parts": [
-        {
-          "path": "https://cateim.github.io/jade-diy/firmware/bootloader.bin",
-          "offset": 4096
-        },
-        {
-          "path": "https://cateim.github.io/jade-diy/firmware/partition-table.bin",
-          "offset": 36864
-        },
-        {
-          "path": "https://cateim.github.io/jade-diy/firmware/ota_data_initial.bin",
-          "offset": 57344
-        },
-        {
-          "path": "https://cateim.github.io/jade-diy/firmware/jade.bin",
-          "offset": 65536
-        }
+        { "path": "bootloader.bin", "offset": 4096 },
+        { "path": "partition-table.bin", "offset": 36864 },
+        { "path": "ota_data_initial.bin", "offset": 57344 },
+        { "path": "jade.bin", "offset": 65536 }
       ]
     }
   ]
