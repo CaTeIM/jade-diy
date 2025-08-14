@@ -3,7 +3,7 @@
 ![Firmware](https://img.shields.io/badge/Firmware-1.0.35--v1--sb-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V2%20Ready-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 <p align="center">
-  <a href="https://github.com/Blockstream/Jade" target="_blank" rel="noopener noreferrer">
+  <a href="" target="_blank" rel="noopener noreferrer">
     <img src="https://raw.githubusercontent.com/cateim/jade-diy/main/assets/jade_logo_white_on_transparent_rgb.svg" alt="Logo da Jade" width="250"/>
   </a>
 </p>
