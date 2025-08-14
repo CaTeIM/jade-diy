@@ -5,6 +5,10 @@
       "chipFamily": "ESP32",
       "parts": [
         {
+          "path": "https://cateim.github.io/jade-diy/firmware/partition-table.bin",
+          "offset": 32768
+        },
+        {
           "path": "https://cateim.github.io/jade-diy/firmware/jade_secure.bin",
           "offset": 65536
         }
