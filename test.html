@@ -244,7 +244,7 @@
                 <div class="radio-option" id="conservativeMode">
                     <input type="radio" id="conservative" name="flashMode" value="conservative" checked>
                     <label for="conservative">
-                        <strong>🛡️ Conservador</strong><br>
+                        <strong>🛡️ Conservativo</strong><br>
                         <small>Apenas firmware principal</small>
                     </label>
                 </div>
@@ -282,7 +282,7 @@
     </div>
 
     <script type="module">
-        import { ESPLoader } from "https://cdn.jsdelivr.net/npm/esptool-js@0.4.6/bundle.js";
+        import { ESPLoader } from "https://unpkg.com/esptool-js@0.4.6/bundle.js";
 
         // Elementos da UI
         const deviceSelect = document.getElementById('device-select');
@@ -316,13 +316,13 @@
                             { path: 'firmware/tdisplay/1.0.35-v1-sb/jade.bin', offset: 0x10000, description: 'Firmware principal' },
                         ],
                         standard: [
-                            { path: 'firmware/tdisplay/1.0.35-v1-sb/partition-table.bin', offset: 0x9000, description: 'Tabela de partições' },
+                            { path: 'firmware/tdisplay/1.0.35-v1-sb/partition-table.bin', offset: 0x8000, description: 'Tabela de partições' },
                             { path: 'firmware/tdisplay/1.0.35-v1-sb/ota_data_initial.bin', offset: 0xE000, description: 'Dados OTA' },
                             { path: 'firmware/tdisplay/1.0.35-v1-sb/jade.bin', offset: 0x10000, description: 'Firmware principal' },
                         ],
                         full: [
                             { path: 'firmware/tdisplay/1.0.35-v1-sb/bootloader.bin', offset: 0x1000, description: 'Bootloader (RISCO!)' },
-                            { path: 'firmware/tdisplay/1.0.35-v1-sb/partition-table.bin', offset: 0x9000, description: 'Tabela de partições' },
+                            { path: 'firmware/tdisplay/1.0.35-v1-sb/partition-table.bin', offset: 0x8000, description: 'Tabela de partições' },
                             { path: 'firmware/tdisplay/1.0.35-v1-sb/ota_data_initial.bin', offset: 0xE000, description: 'Dados OTA' },
                             { path: 'firmware/tdisplay/1.0.35-v1-sb/jade.bin', offset: 0x10000, description: 'Firmware principal' },
                         ]
@@ -475,11 +475,23 @@
                 }
 
                 port = await navigator.serial.requestPort();
-                await port.open({ baudRate: 115200 });
+                logMessage('info', '🔗 Porta selecionada, abrindo conexão...');
                 
-                esploader = new ESPLoader(port, { logger: console });
+                await port.open({ baudRate: 115200 });
+                logMessage('info', '📡 Inicializando ESPLoader...');
+                
+                // Inicialização correta do ESPLoader
+                esploader = new ESPLoader({
+                    port: port,
+                    baudrate: 115200,
+                    enableTracing: false
+                });
+                
+                logMessage('info', '🔍 Conectando ao chip...');
+                await esploader.initialize();
                 await esploader.connect();
                 
+                logMessage('info', '📋 Identificando dispositivo...');
                 const chipInfo = await esploader.chipName();
                 const macAddr = await esploader.readMac();
                 
@@ -493,6 +505,7 @@
                 
             } catch (error) {
                 logMessage('error', `❌ Erro: ${error.message}`);
+                logMessage('info', '💡 Dica: Certifique-se que nenhum software está usando a porta serial');
                 await disconnectDevice();
             }
         }
@@ -503,10 +516,10 @@
                     await esploader.disconnect();
                     esploader = null;
                 }
-                if (port) {
+                if (port && port.readable) {
                     await port.close();
-                    port = null;
                 }
+                port = null;
                 isConnected = false;
                 connectButton.innerHTML = '<span class="status-indicator status-disconnected"></span>Conectar';
                 statusIndicator.className = 'status-indicator status-disconnected';
@@ -514,6 +527,13 @@
                 logMessage('info', '🔌 Desconectado');
             } catch (error) {
                 logMessage('warning', `⚠️ Erro ao desconectar: ${error.message}`);
+                // Força reset das variáveis mesmo com erro
+                esploader = null;
+                port = null;
+                isConnected = false;
+                connectButton.innerHTML = '<span class="status-indicator status-disconnected"></span>Conectar';
+                statusIndicator.className = 'status-indicator status-disconnected';
+                updateProgramButton();
             }
         }
 
