@@ -142,3 +142,4 @@ vite.config.ts.timestamp-*
 assinar_secure_boot.md
 deploy_firmware.ps1
 jade_secure_boot.md
+assets/secure_boot_signing_key.pem
