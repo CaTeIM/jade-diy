@@ -1,78 +1,80 @@
-# 🔱 Atualizador Jade DIY com Secure Boot
+﻿
+# Guia de Uso: Jade DIY na TTGO T-Display
 
-![Firmware](https://img.shields.io/badge/Firmware-1.0.35--v1--sb-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V1-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+Parabéns por ter conquistado uma **Jade DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
 
-<p align="center">
-  <a href="" target="_blank" rel="noopener noreferrer">
-    <img src="https://raw.githubusercontent.com/cateim/jade-diy/main/assets/jade_logo_white_on_transparent_rgb.svg" alt="Logo da Jade" width="250"/>
-  </a>
-</p>
+### ⚠️ ATENÇÃO: A Primeira Vez é com a Blockstream
 
-Uma ferramenta web simples e oficial para atualizar o firmware da sua **Jade DIY montada por nós**, focada em dispositivos que já possuem **Secure Boot ativado**. Chega de linha de comando, chega de complicação. Tudo direto do seu navegador.
+Independente do sistema que você vai usar no dia a dia, a **primeira inicialização da carteira** (o processo de criar uma nova carteira ou restaurar um backup) **precisa ser feita pelo aplicativo oficial Blockstream**.
 
+Isso garante que a "conversa" inicial entre o app e a Jade ocorra como esperado, evitando problemas de sincronização no futuro. Depois de criada, você pode usá-la onde quiser.
 
-## ⚠️ Para Quem é Esta Ferramenta?
+## 🖥️ Usando no Windows: Step-by-step
 
-Esta ferramenta foi feita para um propósito **muito específico**. Leia com atenção para saber se ela é para você:
+No Windows, a comunicação USB tem suas manhas por causa do famoso bug do DTR. Veja como domá-lo.
 
-* ✅ **Você comprou uma Jade DIY conosco** que já veio com **Secure Boot V1 ativado**.
-* ✅ Você quer **ATUALIZAR** o firmware para uma nova versão oficial que estamos disponibilizando.
-* ✅ Você está ciente de que o dispositivo foi selado com uma chave de segurança única.
+#### **Para usar com Blockstream:**
 
-Esta ferramenta **NÃO SERVE** para:
+É obrigatório aplicar a **"Solução de Driver"** que documentamos no tutorial de instalação. Sem isso, a Jade não será reconhecida corretamente.
 
-* ❌ Ativar o Secure Boot pela primeira vez.
-* ❌ "Destravar" uma placa caso algo dê errado (a chave de segurança é permanente).
-* ❌ Instalar um firmware que não seja o oficial fornecido por nós.
+* **Lembrete Rápido:** Vá em `Gerenciador de Dispositivos` → `Portas (COM & LPT)` → `Propriedades da porta CH9102` → `Port Settings` → `Advanced...` e marque a opção **`Disable ModemHandShake`**.
 
-## ✨ Como Usar
+[**Instalar**](https://blockstream.com/app/) Blockstream
 
-Atualizar sua Jade nunca foi tão fácil. Sério.
+#### **Para usar com SideSwap:**
 
-1.  **Acesse o Site:** [**Clique aqui para abrir o atualizador**](https://cateim.github.io/jade-diy/)
-2.  **Selecione seu Hardware:** Nos menus, escolha o modelo da sua placa (`LILYGO TTGO T-Display`) e a versão do firmware que você quer instalar.
-    ![GIF mostrando a seleção de dispositivo e firmware](https://i.imgur.com/your-gif-here.gif) <!-- Troque pelo link de um GIF ou imagem da sua interface -->
-3.  **Conecte a Placa 🔌:** Use um **cabo USB de DADOS** (não um cabo só de carregar) para conectar sua Jade ao computador.
-4.  **Clique em INSTALAR:** O botão azul vai aparecer. Clique nele.
-5.  **Escolha a Porta Serial:** Uma janela pop-up do navegador vai surgir. Selecione a porta correspondente à sua Jade (geralmente tem "USB Serial" ou "COM" no nome) e clique em "Conectar".
-6.  **Pronto!** 🍻 Pegue um café. A ferramenta vai fazer o flash automaticamente. Quando terminar, sua Jade vai reiniciar com o novo firmware.
+O **SideSwap** pode não respeitar a configuração do driver e ainda ativar o DTR, travando um dos botões. Mas não se preocupe, nosso firmware foi preparado para isso!
 
-## 🔐 A Regra de Ouro do Secure Boot
+Você vai operar a Jade no **"Modo de Um Botão"**:
 
-Pensa assim: quando ativamos o Secure Boot na sua Jade, a placa e a nossa chave privada (`.pem`) se "casaram" para sempre. 💍
-O chip guarda uma "impressão digital" da nossa chave e nunca mais aceitará um firmware que não tenha a assinatura **exata** dela.
+* **Botão da Esquerda (`Prev` / `GPIO0`):** Ficará **travado** e não responderá. Ignore-o.
+* **Botão da Direita (`Next` / `GPIO35`):** Será seu único controle.
+    * **Clique Curto:** Navega pelas opções (geralmente para frente/para baixo).
+    * **Clique Longo (segurar por 1 segundo):** **Confirma / Seleciona / OK**.
 
-* **Tentou usar um firmware de outra pessoa?** A placa vai rejeitar com o erro `secure boot check fail`.
-* **Aconteceu um problema grave e a placa travou?** Infelizmente, ela virou um peso de papel. O Secure Boot é uma via de mão única e não permite recuperação.
+Com este **bypass**, você consegue assinar transações e fazer tudo o que precisa no **SideSwap**, mesmo com o bug do DTR ativo.
 
-**Nós garantimos que o firmware fornecido aqui é seguro e assinado com a chave correta para o seu dispositivo.**
+[**Instalar**](https://sideswap.io/downloads/) SideSwap
 
-## 🛠️ Para Usuários Avançados (Desenvolvedores e Montadores)
+## 🤖 Usando no Android: O Caminho Feliz
 
-Quer customizar ou adicionar seus próprios firmwares? Moleza.
+Android é a plataforma mais tranquila para a nossa Jade DIY. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
 
-1.  **Estrutura de Pastas:** O projeto espera a seguinte organização:
+#### 💡 Dica de Ouro: A Conexão Falhou?
 
-    ```
-    firmware/
-    └── [nome_da_placa]/
-        └── [versao_do_firmware]/
-            ├── bootloader.bin
-            ├── jade.bin (JÁ ASSINADO!)
-            ├── ota_data_initial.bin
-            ├── partition-table.bin
-            └── manifest.json
-    ```
+Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontrar a Jade:
 
-2.  **Adicionar uma Nova Versão:**
-    * Crie a estrutura de pastas acima.
-    * Gere os 4 arquivos `.bin` usando o ESP-IDF v5.4, com as configurações corretas e assinado com sua chave V1.
-    * Crie um `manifest.json` dentro da pasta com os caminhos relativos.
-    * Abra o `index.html` e adicione a nova versão no objeto `firmwares` dentro da tag `<script>`.
+1.  Vá até as **Configurações de Bluetooth** do seu celular Android.
+2.  Encontre a **"Jade"** na lista de dispositivos pareados.
+3.  Clique nela e escolha a opção **"Esquecer"** ou **"Desparear"**.
+4.  Tente conectar novamente pelo aplicativo. O processo de pareamento será refeito do zero e geralmente resolve o problema.
+
+[**Blockstream**](https://play.google.com/store/apps/details?id=com.greenaddress.greenbits_android_wallet)
+[**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
+
+## 🍏 Usando no iOS: O Macete do QR Code
+
+Aqui temos nosso maior desafio. O app da Blockstream para iOS **não consegue parear via Bluetooth** com nossa placa. Mas, como bons engenheiros de gambiarra, temos uma solução elegante.
+
+O truque é usar o SideSwap para gerar um QR Code da sua chave pública (Xpub) e importá-lo no Blockstream.
+
+**Siga os passos na ordem exata:**
+
+1.  **Conecte na SideSwap Primeiro:** Abra o app SideSwap no seu iPhone e conecte-se à sua Jade via Bluetooth.
+2.  **Desbloqueie sua Jade:** Digite seu PIN na Jade para ter acesso à carteira.
+3.  **Exporte sua Chave Pública (Xpub):** Dentro do SideSwap, navegue até o menu:
+    * `Options` → `Wallet` → `Export Xpub`
+4.  **Escolha o Tipo de Carteira:** Selecione `Singlesig` ou `Multisig`, dependendo da sua configuração. A sua Jade irá processar e exibir um QR Code na tela. **Deixe este QR Code visível.**
+5.  **Abra o Blockstream :** Sem fechar o SideSwap ou bloquear a Jade, mude para o app da Blockstream.
+6.  **Inicie o Fluxo de Conexão via QR:** Siga este caminho no app Blockstream:
+    * `Configurar uma carteira nova` → `Conectar Jade` → `Conectar via QR` → `Jade já desbloqueada` → `Escaneie a PubKey`.
+7.  **Escaneie e Sincronize:** Aponte a câmera do seu iPhone para a tela da sua TTGO T-Display. O Blockstream irá ler o QR Code, importar sua chave pública e sincronizar sua carteira.
+
+Pronto! A partir de agora, sua carteira estará configurada no Blockstream para iOS e você poderá usá-la para monitorar saldos e gerar endereços de recebimento. Para assinar transações, você ainda precisará de um app que conecte diretamente, como o SideSwap.
+
+[**Blockstream**](https://apps.apple.com/us/app/green-bitcoin-wallet/id1402243590)
+[**SideSwap**](https://apps.apple.com/app/sideswap/id1556476417#?platform=iphone)
 
 ---
+Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade DIY está pronta para proteger seus satoshis com segurança em qualquer plataforma.
 
-### Créditos
-
-* A **Blockstream**, por criar e manter o projeto incrível que é a Jade.
-* A galera do **ESPHome** e **`esp-web-tools`**, que criaram a magia de flashear direto do navegador que usamos aqui.
