@@ -78,5 +78,4 @@ Pronto! A partir de agora, sua carteira estará configurada no Blockstream para 
 [**SideSwap**](https://apps.apple.com/app/sideswap/id1556476417#?platform=iphone)
 
 ---
-Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade DIY está pronta para proteger seus satoshis com segurança em qualquer plataforma.
-
+**Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade DIY está pronta para proteger seus satoshis com segurança em qualquer plataforma.**
