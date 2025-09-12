@@ -50,6 +50,7 @@ Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontr
 4.  Tente conectar novamente pelo aplicativo. O processo de pareamento será refeito do zero e geralmente resolve o problema.
 
 [**Blockstream**](https://play.google.com/store/apps/details?id=com.greenaddress.greenbits_android_wallet)
+
 [**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
 
 ## 🍏 Usando no iOS: O Macete do QR Code
@@ -73,6 +74,7 @@ O truque é usar o SideSwap para gerar um QR Code da sua chave pública (Xpub) e
 Pronto! A partir de agora, sua carteira estará configurada no Blockstream para iOS e você poderá usá-la para monitorar saldos e gerar endereços de recebimento. Para assinar transações, você ainda precisará de um app que conecte diretamente, como o SideSwap.
 
 [**Blockstream**](https://apps.apple.com/us/app/green-bitcoin-wallet/id1402243590)
+
 [**SideSwap**](https://apps.apple.com/app/sideswap/id1556476417#?platform=iphone)
 
 ---
