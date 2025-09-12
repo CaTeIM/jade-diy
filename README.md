@@ -1,4 +1,4 @@
-﻿
+
 # Guia de Uso: Jade DIY na TTGO T-Display
 
 Parabéns por ter conquistado uma **Jade DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
@@ -63,7 +63,7 @@ O truque é usar o SideSwap para gerar um QR Code da sua chave pública (Xpub) e
 
 1.  **Conecte na SideSwap Primeiro:** Abra o app SideSwap no seu iPhone e conecte-se à sua Jade via Bluetooth.
 2.  **Desbloqueie sua Jade:** Digite seu PIN na Jade para ter acesso à carteira.
-3.  **Exporte sua Chave Pública (Xpub):** Dentro do SideSwap, navegue até o menu:
+3.  **Exporte sua Chave Pública (Xpub):** Na Jade, navegue até o menu:
     * `Options` → `Wallet` → `Export Xpub`
 4.  **Escolha o Tipo de Carteira:** Selecione `Singlesig` ou `Multisig`, dependendo da sua configuração. A sua Jade irá processar e exibir um QR Code na tela. **Deixe este QR Code visível.**
 5.  **Abra o Blockstream :** Sem fechar o SideSwap ou bloquear a Jade, mude para o app da Blockstream.
@@ -71,7 +71,7 @@ O truque é usar o SideSwap para gerar um QR Code da sua chave pública (Xpub) e
     * `Configurar uma carteira nova` → `Conectar Jade` → `Conectar via QR` → `Jade já desbloqueada` → `Escaneie a PubKey`.
 7.  **Escaneie e Sincronize:** Aponte a câmera do seu iPhone para a tela da sua TTGO T-Display. O Blockstream irá ler o QR Code, importar sua chave pública e sincronizar sua carteira.
 
-Pronto! A partir de agora, sua carteira estará configurada no Blockstream para iOS e você poderá usá-la para monitorar saldos e gerar endereços de recebimento. Para assinar transações, você ainda precisará de um app que conecte diretamente, como o SideSwap.
+Pronto! A partir de agora, sua carteira estará configurada no Blockstream para iOS e você poderá usá-la para monitorar saldos. Para assinar transações, você ainda precisará de um app que conecte diretamente, como o SideSwap.
 
 [**Blockstream**](https://apps.apple.com/us/app/green-bitcoin-wallet/id1402243590)
 
