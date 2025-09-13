@@ -1,4 +1,3 @@
-
 # Guia de Uso: Jade DIY na TTGO T-Display
 
 Parabéns por ter conquistado uma **Jade DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
@@ -9,7 +8,7 @@ Independente do sistema que você vai usar no dia a dia, a **primeira inicializa
 
 Isso garante que a "conversa" inicial entre o app e a Jade ocorra como esperado, evitando problemas de sincronização no futuro. Depois de criada, você pode usá-la onde quiser.
 
-## 🖥️ Usando no Windows: Step-by-step
+## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows11/windows11-original.svg" width="20" height="20"/> Usando no Windows: Step-by-step
 
 No Windows, a comunicação USB tem suas manhas por causa do famoso bug do DTR. Veja como domá-lo.
 
@@ -36,24 +35,7 @@ Com este **bypass**, você consegue assinar transações e fazer tudo o que prec
 
 [**Instalar**](https://sideswap.io/downloads/) SideSwap
 
-## 🤖 Usando no Android: O Caminho Feliz
-
-Android é a plataforma mais tranquila para a nossa Jade DIY. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
-
-#### 💡 Dica de Ouro: A Conexão Falhou?
-
-Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontrar a Jade:
-
-1.  Vá até as **Configurações de Bluetooth** do seu celular Android.
-2.  Encontre a **"Jade"** na lista de dispositivos pareados.
-3.  Clique nela e escolha a opção **"Esquecer"** ou **"Desparear"**.
-4.  Tente conectar novamente pelo aplicativo. O processo de pareamento será refeito do zero e geralmente resolve o problema.
-
-[**Blockstream**](https://play.google.com/store/apps/details?id=com.greenaddress.greenbits_android_wallet)
-
-[**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
-
-## 🍏 Usando no iOS: O Macete do QR Code
+## <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: O Macete do QR Code
 
 Aqui temos nosso maior desafio. O app da Blockstream para iOS **não consegue parear via Bluetooth** com nossa placa. Mas, como bons engenheiros de gambiarra, temos uma solução elegante.
 
@@ -76,6 +58,23 @@ Pronto! A partir de agora, sua carteira estará configurada no Blockstream para 
 [**Blockstream**](https://apps.apple.com/us/app/green-bitcoin-wallet/id1402243590)
 
 [**SideSwap**](https://apps.apple.com/app/sideswap/id1556476417#?platform=iphone)
+
+## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="25" height="25"/> Usando no Android: O Caminho Feliz
+
+Android é a plataforma mais tranquila para a nossa Jade DIY. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
+
+#### 💡 Dica de Ouro: A Conexão Falhou?
+
+Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontrar a Jade:
+
+1.  Vá até as **Configurações de Bluetooth** do seu celular Android.
+2.  Encontre a **"Jade"** na lista de dispositivos pareados.
+3.  Clique nela e escolha a opção **"Esquecer"** ou **"Desparear"**.
+4.  Tente conectar novamente pelo aplicativo. O processo de pareamento será refeito do zero e geralmente resolve o problema.
+
+[**Blockstream**](https://play.google.com/store/apps/details?id=com.greenaddress.greenbits_android_wallet)
+
+[**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
 
 ---
 **Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade DIY está pronta para proteger seus satoshis com segurança em qualquer plataforma.**
