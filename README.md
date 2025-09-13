@@ -35,7 +35,7 @@ Com este **bypass**, você consegue assinar transações e fazer tudo o que prec
 
 [**Instalar**](https://sideswap.io/downloads/) SideSwap
 
-## <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: O Macete do QR Code
+## <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: QR Code
 
 Aqui temos nosso maior desafio. O app da Blockstream para iOS **não consegue parear via Bluetooth** com nossa placa. Mas, como bons engenheiros de gambiarra, temos uma solução elegante.
 
@@ -59,7 +59,7 @@ Pronto! A partir de agora, sua carteira estará configurada no Blockstream para 
 
 [**SideSwap**](https://apps.apple.com/app/sideswap/id1556476417#?platform=iphone)
 
-## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="25" height="25"/> Usando no Android: O Caminho Feliz
+## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="25" height="25"/> Usando no Android: Mode Easy
 
 Android é a plataforma mais tranquila para a nossa Jade DIY. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
 
