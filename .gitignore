@@ -143,3 +143,8 @@ assinar_secure_boot.md
 deploy_firmware.ps1
 jade_secure_boot.md
 assets/secure_boot_signing_key.pem
+main/CMakeLists.txt
+main/gui.c
+main/input/navbtns.inc
+main/Kconfig.projbuild
+partitions_custom.csv
