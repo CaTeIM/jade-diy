@@ -148,3 +148,9 @@ main/gui.c
 main/input/navbtns.inc
 main/Kconfig.projbuild
 partitions_custom.csv
+assets/demonstration_case.psd
+firmware/tdisplay/1.0.36-v1-nb/bootloader.bin
+firmware/tdisplay/1.0.36-v1-nb/jade.bin
+firmware/tdisplay/1.0.36-v1-nb/manifest.json
+firmware/tdisplay/1.0.36-v1-nb/ota_data_initial.bin
+firmware/tdisplay/1.0.36-v1-nb/partition-table.bin
