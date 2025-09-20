@@ -1,6 +1,6 @@
-# Guia de Uso: Jade DIY na TTGO T-Display
+# Guia de Uso: Jade Wallet DIY na LILYGO T-Display
 
-Parabéns por ter conquistado uma **Jade DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
+Parabéns por ter conquistado uma **Jade Wallet DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
 
 ### ⚠️ ATENÇÃO: A Primeira Vez é com a Blockstream
 
@@ -51,7 +51,7 @@ O truque é usar o SideSwap para gerar um QR Code da sua chave pública (Xpub) e
 5.  **Abra o Blockstream :** Sem fechar o SideSwap ou bloquear a Jade, mude para o app da Blockstream.
 6.  **Inicie o Fluxo de Conexão via QR:** Siga este caminho no app Blockstream:
     * `Configurar uma carteira nova` → `Conectar Jade` → `Conectar via QR` → `Jade já desbloqueada` → `Escaneie a PubKey`.
-7.  **Escaneie e Sincronize:** Aponte a câmera do seu iPhone para a tela da sua TTGO T-Display. O Blockstream irá ler o QR Code, importar sua chave pública e sincronizar sua carteira.
+7.  **Escaneie e Sincronize:** Aponte a câmera do seu iPhone para a tela da sua LILYGO T-Display. O Blockstream irá ler o QR Code, importar sua chave pública e sincronizar sua carteira.
 
 Pronto! A partir de agora, sua carteira estará configurada no Blockstream para iOS e você poderá usá-la para monitorar saldos. Para assinar transações, você ainda precisará de um app que conecte diretamente, como o SideSwap.
 
@@ -61,7 +61,7 @@ Pronto! A partir de agora, sua carteira estará configurada no Blockstream para 
 
 ## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="25" height="25"/> Usando no Android: Mode Easy
 
-Android é a plataforma mais tranquila para a nossa Jade DIY. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
+Android é a plataforma mais tranquila para a nossa Jade Wallet DIY. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
 
 #### 💡 Dica de Ouro: A Conexão Falhou?
 
@@ -77,4 +77,4 @@ Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontr
 [**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
 
 ---
-**Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade DIY está pronta para proteger seus satoshis com segurança em qualquer plataforma.**
+**Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade Wallet DIY está pronta para proteger seus satoshis com segurança em qualquer plataforma.**
