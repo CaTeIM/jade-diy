@@ -138,7 +138,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Arquivos para documentação do projeto
+# Arquivos para documentação do projeto e testes
 assinar_secure_boot.md
 deploy_firmware.ps1
 jade_secure_boot.md
@@ -149,11 +149,18 @@ main/input/navbtns.inc
 main/Kconfig.projbuild
 partitions_custom.csv
 assets/demonstration_case.psd
+old_atualizar_jade_wallet.md
+
+# Ignorar arquivos HTML específicos
+index.html
+test.html
+
+# Ignorar todos os arquivos de workflows do GitHub Actions
+.github/workflows/*
+
+# Ignorar arquivos de firmware específicos
 firmware/tdisplay/1.0.36-v1-nb/bootloader.bin
 firmware/tdisplay/1.0.36-v1-nb/jade.bin
 firmware/tdisplay/1.0.36-v1-nb/manifest.json
 firmware/tdisplay/1.0.36-v1-nb/ota_data_initial.bin
 firmware/tdisplay/1.0.36-v1-nb/partition-table.bin
-old_atualizar_jade_wallet.md
-test.html
-index.html
