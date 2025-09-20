@@ -2,6 +2,10 @@
 
 Parabéns por ter conquistado uma **Jade Wallet DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
 
+Ainda não tem uma Jade Wallet? ADQUIRA JÁ!
+
+🛒 https://pixgo.org/loja/jade-wallet
+
 ### ⚠️ ATENÇÃO: A Primeira Vez é com a Blockstream
 
 Independente do sistema que você vai usar no dia a dia, a **primeira inicialização da carteira** (o processo de criar uma nova carteira ou restaurar um backup) **precisa ser feita pelo aplicativo oficial Blockstream**.
