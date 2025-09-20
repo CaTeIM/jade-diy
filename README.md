@@ -1,4 +1,4 @@
-# Guia de Uso: Jade Wallet DIY na LILYGO T-Display
+# Guia de Uso: Jade Wallet DIY
 
 Parabéns por ter conquistado uma **Jade Wallet DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
 
