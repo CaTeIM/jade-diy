@@ -1,10 +1,12 @@
-# Guia de Uso: Jade Wallet DIY
+# Guia de Uso: Jade Wallet
 
-Parabéns por ter conquistado uma **Jade Wallet DIY**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
+Parabéns por ter conquistado uma **Jade Wallet**! Você adquiriu uma hardware wallet e poderá gerar sua **cold wallet** em segurança. Agora, vamos aprender a usá-la nos diferentes sistemas, porque um projeto customizado tem suas peculiaridades.
 
-Ainda não tem uma Jade Wallet? **ADQUIRA JÁ!**
+## 🚀 Atualize sua Jade Wallet
 
-🛒 https://pixgo.org/loja/jade-wallet
+Para garantir que sua carteira esteja sempre segura e funcional, mantenha o firmware atualizado.
+
+👉 [Clique aqui para acessar o guia de atualização](https://github.com/CaTeIM/jade-diy/blob/main/atualizar_jade_wallet.md)
 
 ### ⚠️ ATENÇÃO: A Primeira Vez é com a Blockstream
 
@@ -65,7 +67,7 @@ Pronto! A partir de agora, sua carteira estará configurada no Blockstream para 
 
 ## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="25" height="25"/> Usando no Android: Mode Easy
 
-Android é a plataforma mais tranquila para a nossa Jade Wallet DIY. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
+Android é a plataforma mais tranquila para a nossa Jade Wallet. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
 
 #### 💡 Dica de Ouro: A Conexão Falhou?
 
@@ -80,5 +82,9 @@ Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontr
 
 [**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
 
+## 🛒 Ainda não tem uma Jade Wallet? **ADQUIRA JÁ!**
+
+Compre em nossa loja parceira <span><a href="https://pixgo.org/loja/jade-wallet">PixGO <img src="https://pixgo.org/imgs/logo.png" width="50" align="absmiddle"/></a></span>
+
 ---
-**Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade Wallet DIY está pronta para proteger seus satoshis com segurança em qualquer plataforma.**
+**Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade Wallet está pronta para proteger seus satoshis com segurança em qualquer plataforma.**
