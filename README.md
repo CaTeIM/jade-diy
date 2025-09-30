@@ -41,7 +41,7 @@ Com este **bypass**, você consegue assinar transações e fazer tudo o que prec
 
 [**Instalar**](https://sideswap.io/downloads/) SideSwap
 
-## <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: QR Code
+## ~<img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: QR Code~ ⚠️ ATENÇÃO: MÉTODO NÃO ESTÁ FUNCIONANDO
 
 Aqui temos nosso maior desafio. O app da Blockstream para iOS **não consegue parear via Bluetooth** com nossa placa. Mas, como bons engenheiros de gambiarra, temos uma solução elegante.
 
@@ -53,7 +53,7 @@ O truque é usar o SideSwap para gerar um QR Code da sua chave pública (Xpub) e
 2.  **Desbloqueie sua Jade:** Digite seu PIN na Jade para ter acesso à carteira.
 3.  **Exporte sua Chave Pública (Xpub):** Na Jade, navegue até o menu:
     * `Options` → `Wallet` → `Export Xpub`
-4.  **Escolha o Tipo de Carteira:** Selecione `Singlesig` ou `Multisig`, dependendo da sua configuração. A sua Jade irá processar e exibir um QR Code na tela. **Deixe este QR Code visível.**
+4.  **Escolha o Tipo de Carteira:** Selecione `Singlesig`. A sua Jade irá processar e exibir um QR Code na tela. **Deixe este QR Code visível.**
 5.  **Abra o Blockstream :** Sem fechar o SideSwap ou bloquear a Jade, mude para o app da Blockstream.
 6.  **Inicie o Fluxo de Conexão via QR:** Siga este caminho no app Blockstream:
     * `Configurar uma carteira nova` → `Conectar Jade` → `Conectar via QR` → `Jade já desbloqueada` → `Escaneie a PubKey`.
