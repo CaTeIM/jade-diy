@@ -159,11 +159,6 @@ test.html
 .github/workflows/*
 
 # Ignorar arquivos de firmware específicos
-firmware/tdisplay/1.0.36-v1-nb/bootloader.bin
-firmware/tdisplay/1.0.36-v1-nb/jade.bin
-firmware/tdisplay/1.0.36-v1-nb/manifest.json
-firmware/tdisplay/1.0.36-v1-nb/ota_data_initial.bin
-firmware/tdisplay/1.0.36-v1-nb/partition-table.bin
 assets/box/Blockstream-Jade-Box-Back.webp
 assets/box/Blockstream-Jade-Box-Front.webp
 assets/box/Blockstream-Jade-Box-Side.webp
@@ -174,3 +169,15 @@ assets/box/fonts/Caligor Sans Clean.7z
 assets/box/fonts/Compasse.7z
 assets/box/fonts/DIN Next LT Arabic Medium.7z
 assets/box/fonts/Huley 1967.7z
+w_batt/main/CMakeLists.txt
+w_batt/main/gui.c
+w_batt/main/input/navbtns.inc
+w_batt/main/Kconfig.projbuild
+w_batt/main/power.c
+wo_batt/main/CMakeLists.txt
+wo_batt/main/gui.c
+wo_batt/main/input/navbtns.inc
+wo_batt/main/Kconfig.projbuild
+wo_batt/main/power.c
+w_batt/main/process.h
+w_batt/main/power/tdisplay.inc
