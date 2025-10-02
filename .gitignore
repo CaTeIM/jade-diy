@@ -139,26 +139,8 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # Arquivos para documentação do projeto e testes
-assinar_secure_boot.md
-deploy_firmware.ps1
-jade_secure_boot.md
-assets/secure_boot_signing_key.pem
-main/CMakeLists.txt
-main/gui.c
-main/input/navbtns.inc
-main/Kconfig.projbuild
-partitions_custom.csv
 assets/demonstration_case.psd
-old_atualizar_jade_wallet.md
-
-# Ignorar arquivos HTML específicos
-index.html
-test.html
-
-# Ignorar todos os arquivos de workflows do GitHub Actions
-.github/workflows/*
-
-# Ignorar arquivos de firmware específicos
+assets/secure_boot_signing_key.pem
 assets/box/Blockstream-Jade-Box-Back.webp
 assets/box/Blockstream-Jade-Box-Front.webp
 assets/box/Blockstream-Jade-Box-Side.webp
@@ -169,15 +151,27 @@ assets/box/fonts/Caligor Sans Clean.7z
 assets/box/fonts/Compasse.7z
 assets/box/fonts/DIN Next LT Arabic Medium.7z
 assets/box/fonts/Huley 1967.7z
+jade_secure_boot.md
+partitions_custom.csv
+old_atualizar_jade_wallet.md
+
+# Ignorar arquivos HTML específicos
+index.html
+test.html
+
+# Ignorar todos os arquivos de workflows do GitHub Actions
+.github/workflows/*
+
+# Ignorar arquivos de firmware específicos
 w_batt/main/CMakeLists.txt
 w_batt/main/gui.c
 w_batt/main/input/navbtns.inc
 w_batt/main/Kconfig.projbuild
 w_batt/main/power.c
+w_batt/main/power/tdisplay.inc
+w_batt/main/process.h
 wo_batt/main/CMakeLists.txt
 wo_batt/main/gui.c
 wo_batt/main/input/navbtns.inc
 wo_batt/main/Kconfig.projbuild
 wo_batt/main/power.c
-w_batt/main/process.h
-w_batt/main/power/tdisplay.inc
