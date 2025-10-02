@@ -160,7 +160,7 @@ index.html
 test.html
 
 # Ignorar todos os arquivos de workflows do GitHub Actions
-.github/workflows/*
+# .github/workflows/*
 
 # Ignorar arquivos de firmware específicos
 w_batt/main/CMakeLists.txt

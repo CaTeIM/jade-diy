@@ -66,20 +66,22 @@ A ideia é ter uma página que permita ao usuário escolher a placa e a versão 
 
 A organização para um **update** é mais simples. Note a ausência do `bootloader.bin`!
 
-```mermaid
-  📂 assets
-   📂 update
-    🖼️ logos.png
-  📂 firmware
-    📂 [nome_da_placa]
-      📂 [versao_do_firmware]
-        🔐 jade.bin
-        📦 ota_data_initial.bin
-        📦 partition-table.bin
-        📄 manifest.json
-  📄 LICENSE
-  📄 README.md
-  📄 atualizar_jade_wallet.md
+```
+📂 assets/
+	📂 update
+	🖼️ logos.png
+📂 firmware/
+	📂 [nome_da_placa]/
+		📂 [versao_do_firmware]/
+			🔐 jade-signed.bin
+			📦 ota_data_initial.bin
+			📦 partition-table.bin
+			📄 manifest.json
+📄 LICENSE
+📄 README.md
+📄 assinar_secure_boot.md
+📄 atualizar_jade_wallet.md
+⚙️ deploy_firmware.ps1
 ```
 
 ### `manifest.json` (O Mapa da Instalação)

@@ -30,7 +30,7 @@ Atualizar sua Jade Wallet nunca foi tão fácil. Sério.
 
 ## 🔁 Atualizar Jade Wallet
 
-Guia direto para atualizar o firmware da sua Jade DIY. Tenha os **4 arquivos `.bin`** prontos e um cabo USB. ⚠️ Leia atentamente antes de começar.
+Guia direto para atualizar o firmware da sua Jade DIY. Tenha os **3 arquivos `.bin`** prontos e um cabo USB. ⚠️ Leia atentamente antes de começar.
 
 ## ⚠️ Atenção: Importante!!!
 
@@ -42,7 +42,7 @@ Mantenha este firmware como a única opção de atualização para evitar proble
 
 ## ✅ Checklist antes de começar
 - Cabo USB funcionando (não só carregamento). 🔌  
-- Os **4 arquivos `.bin`** baixados (veja link abaixo). ⬇️  
+- Os **3 arquivos `.bin`** baixados (veja link abaixo). ⬇️  
 - PC com navegador compatível (Chrome/Edge recomendados). 🖥️
 
 **Baixe os arquivos**:  
@@ -76,8 +76,8 @@ Tela preta mostrará logs e vai aparecer **`Connected to device`** no topo quand
   <img src="https://raw.githubusercontent.com/cateim/jade-diy/main/assets/update/step_3.webp" alt="Connected to device" />
 </p>
 
-## 4️⃣ Adicionar os 4 arquivos
-O site abre com 1 slot só. Clique **`Add File`** até ter **4 vagas**.
+## 4️⃣ Adicionar os 3 arquivos
+O site abre com 1 slot só. Clique **`Add File`** até ter **3 vagas**.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/cateim/jade-diy/main/assets/update/step_4.webp" alt="Adicionar 4 arquivos" />
@@ -88,8 +88,7 @@ Coloque cada arquivo na ordem abaixo (use **`Escolher arquivo`**):
 
 📁 **Arquivos (ordem):**
 ```py
-bootloader.bin
-jade.bin
+jade-signed.bin
 ota_data_initial.bin
 partition-table.bin
 ```
@@ -98,8 +97,8 @@ partition-table.bin
 
 | Flash Address | File                     |
 | :------------ | :----------------------- |
-| `0x1000`      | `bootloader.bin`         |
-| `0x10000`     | `jade.bin`               |
+| ~~`0x1000`~~      | ~~`bootloader.bin`~~         |
+| `0x10000`     | `jade-signed.bin`               |
 | `0xE000`      | `ota_data_initial.bin`   |
 | `0x9000`      | `partition-table.bin`    |
 
@@ -143,20 +142,20 @@ O chip guarda uma "impressão digital" da nossa chave e nunca mais aceitará um 
 
 ## 🛠️ Para Usuários Avançados (Desenvolvedores e Montadores)
 
-Quer customizar ou adicionar seus próprios firmwares? Moleza.
+Quer customizar ou adicionar seus próprios firmwares?
 
 1.  **Estrutura de Pastas:** O projeto espera a seguinte organização:
 
     ```
-    firmware/
-    └── [nome_da_placa]/
-        └── [versao_do_firmware]/
-            ├── bootloader.bin
-            ├── jade.bin (JÁ ASSINADO!)
-            ├── ota_data_initial.bin
-            ├── partition-table.bin
-            └── manifest.json
+	📂 firmware/
+		📂 [nome_da_placa]/
+			📂 [versao_do_firmware]/
+				🔐 jade-signed.bin
+				📦 ota_data_initial.bin
+				📦 partition-table.bin
+				📄 manifest.json
     ```
+
 ## 📌 Créditos
 
 * A **Blockstream**, por criar e manter o projeto incrível que é a Jade.
