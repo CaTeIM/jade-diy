@@ -1,14 +1,13 @@
 ﻿# Script para automatizar a cópia dos arquivos de firmware da Jade DIY
 #
 # COMO USAR:
-# 1. Salve este arquivo como 'deploy_firmware.ps1' na raiz do seu projeto do GitHub.
-# 2. Compile e assine seu firmware normalmente.
-# 3. Abra um terminal PowerShell, navegue até a pasta do projeto e execute: .\deploy_firmware.ps1
+# 1. Compile e assine seu firmware normalmente (gerando o 'jade-signed.bin').
+# 2. Abra um terminal PowerShell, navegue até a pasta do projeto e execute: .\deploy_firmware.ps1
 #
 
 # --- CONFIGURAÇÕES ---
 # Altere estes caminhos para corresponderem ao seu ambiente
-$buildDir = "D:\CaTeIM\Google Drive\GitHub\Jade"
+$buildDir = "D:\GitHub\Jade"
 $githubDir = "D:\CaTeIM\Google Drive\GitHub\jade-diy"
 
 # --- INÍCIO DO SCRIPT ---
@@ -22,12 +21,14 @@ Write-Host "--- Script de Deploy para Firmware Jade DIY ---" -ForegroundColor Cy
 $placa = Read-Host -Prompt "Qual o nome da placa? (ex: tdisplay)"
 if ([string]::IsNullOrWhiteSpace($placa)) {
     Write-Host "Nome da placa não pode ser vazio. Abortando." -ForegroundColor Red
+    Read-Host "Pressione Enter para sair..."
     exit
 }
 
 $versao = Read-Host -Prompt "Qual a versão do novo firmware? (ex: 1.0.xx-yy-wbatt)"
 if ([string]::IsNullOrWhiteSpace($versao)) {
     Write-Host "Versão não pode ser vazia. Abortando." -ForegroundColor Red
+    Read-Host "Pressione Enter para sair..."
     exit
 }
 
@@ -42,13 +43,13 @@ if (-not (Test-Path $destinoDir)) {
     Write-Host "Criando diretório de destino: $destinoDir"
     New-Item -Path $destinoDir -ItemType Directory | Out-Null
 } else {
-    Write-Host "Diretório de destino já existe. Os arquivos serão sobrescritos se necessário." -ForegroundColor Yellow
+    Write-Host "Diretório de destino já existe. Os arquivos serão sobrescritos." -ForegroundColor Yellow
 }
 
 # 4. Lista de arquivos para copiar e seus nomes de destino
 $arquivosParaCopiar = @{
-    (Join-Path $fonteBuildDir 'bootloader\bootloader.bin')           = "bootloader.bin";
-    (Join-Path $fonteBuildDir 'jade.bin')                            = "jade.bin"; # Renomeia o firmware assinado
+    # MUDANÇA: Agora o destino também é 'jade-signed.bin'
+    (Join-Path $fonteBuildDir 'jade-signed.bin')                     = "jade-signed.bin";
     (Join-Path $fonteBuildDir 'ota_data_initial.bin')                = "ota_data_initial.bin";
     (Join-Path $fonteBuildDir 'partition_table\partition-table.bin') = "partition-table.bin";
 }
@@ -66,7 +67,7 @@ foreach ($fonte in $arquivosParaCopiar.Keys) {
     }
 }
 
-# 6. Cria o arquivo manifest.json (com a ordem das chaves corrigida)
+# 6. Cria o arquivo manifest.json
 Write-Host "`nGerando manifest.json..."
 $manifestContent = [ordered]@{
     name = "Jade DIY $versao for $placa"
@@ -74,8 +75,7 @@ $manifestContent = [ordered]@{
         [ordered]@{
             chipFamily = "ESP32"
             parts = @(
-                [ordered]@{ path = "bootloader.bin"; offset = 4096 },
-                [ordered]@{ path = "jade.bin"; offset = 65536 },
+                [ordered]@{ path = "jade-signed.bin"; offset = 65536 },
                 [ordered]@{ path = "ota_data_initial.bin"; offset = 57344 },
                 [ordered]@{ path = "partition-table.bin"; offset = 36864 }
             )
@@ -94,3 +94,7 @@ Write-Host "  [OK] manifest.json criado com sucesso!" -ForegroundColor Green
 Write-Host "`n--- Processo Concluído! ---" -ForegroundColor Cyan
 Write-Host "Verifique a pasta '$destinoDir' para confirmar os arquivos."
 Write-Host "Próximo passo: Não se esqueça de atualizar o arquivo 'index.html' com a nova versão!" -ForegroundColor Yellow
+
+# Pausa o script e aguarda o usuário pressionar Enter
+Write-Host "`n"
+Read-Host "Pressione Enter para fechar o terminal..."
