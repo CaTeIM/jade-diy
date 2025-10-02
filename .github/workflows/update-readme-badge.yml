@@ -23,7 +23,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. A MÁGICA: Acha a última versão de firmware no index.html
+      # 2. Acha a última versão de firmware no index.html
       - name: Get latest firmware version
         id: get_version
         run: |
@@ -43,17 +43,18 @@ jobs:
           echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
           echo "badge_version=$BADGE_VERSION" >> $GITHUB_OUTPUT
 
-      # 3. Atualiza o README.md com a nova versão
-      - name: Update README.md
+      # 3. Atualiza o 'atualizar_jade_wallet.md' com a nova versão
+      - name: Update atualizar_jade_wallet.md
         run: |
-          # Usa o 'sed' para encontrar a linha do badge e substituir a versão antiga pela nova
-          sed -i "s|img.shields.io/badge/Firmware-.*-blue|img.shields.io/badge/Firmware-${{ steps.get_version.outputs.badge_version }}-blue|g" README.md
+          # Usa o 'sed' para encontrar a linha do badge e substituir a versão no arquivo correto
+          sed -i "s|img.shields.io/badge/Firmware-.*-blue|img.shields.io/badge/Firmware-${{ steps.get_version.outputs.badge_version }}-blue|g" atualizar_jade_wallet.md
 
-      # 4. Faz o commit e push das mudanças no README.md
+      # 4. Faz o commit e push das mudanças no 'atualizar_jade_wallet.md'
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           # Mensagem de commit agora bate com a regra do 'if'
           commit_message: "Bot: Auto-update firmware badge to v${{ steps.get_version.outputs.version }}"
           branch: main
-          file_pattern: README.md
+          # O padrão de arquivo a ser verificado para commit
+          file_pattern: atualizar_jade_wallet.md
