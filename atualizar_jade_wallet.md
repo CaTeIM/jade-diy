@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="" target="_blank" rel="noopener noreferrer">
-    <img src="https://raw.githubusercontent.com/cateim/jade-diy/main/assets/jade_logo_white_on_transparent_rgb.svg" alt="Logo da Jade" width="250"/>
+    <img src="https://raw.githubusercontent.com/cateim/jade-diy/main/assets/jade/logos/jade_web/jade_logo_white_on_transparent_rgb.svg" alt="Logo da Jade" width="250"/>
   </a>
 </p>
 
