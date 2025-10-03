@@ -1,0 +1,76 @@
+# Nome da nossa automação
+name: Update All Firmware Badges
+
+on:
+  # Aciona a automação em qualquer push para a branch 'main'
+  push:
+    branches:
+      - main
+
+# Adiciona a permissão de escrita para o bot poder fazer o commit
+permissions:
+  contents: write
+
+jobs:
+  update-badge:
+    # Não roda o job se o último commit foi feito pelo bot, para evitar loops infinitos
+    if: "${{ !contains(github.event.head_commit.message, 'Bot:') }}"
+
+    runs-on: ubuntu-latest
+
+    # A MATRIZ: O cérebro da operação.
+    # Define as configurações para cada placa que queremos atualizar.
+    strategy:
+      matrix:
+        device:
+          # Configuração para a primeira placa
+          - name: tdisplay
+            file: atualizar_jade_tdisplay.md
+          # Configuração para a segunda placa
+          - name: tdisplays3
+            file: atualizar_jade_tdisplays3.md
+
+    steps:
+      # 1. Baixa o código do seu repositório
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. A NOVA LÓGICA: Acha a última versão olhando as pastas
+      - name: Get latest firmware version for ${{ matrix.device.name }}
+        id: get_version
+        run: |
+          # Procura na pasta específica da placa, ordena por versão e pega a última
+          DEVICE_PATH="firmware/${{ matrix.device.name }}"
+          if [ -d "$DEVICE_PATH" ]; then
+            LATEST_VERSION=$(ls -v "$DEVICE_PATH" | tail -n 1)
+          else
+            LATEST_VERSION=""
+          fi
+
+          if [ -z "$LATEST_VERSION" ]; then
+            LATEST_VERSION="not-found"
+          fi
+          
+          echo "Found version for ${{ matrix.device.name }}: $LATEST_VERSION"
+          # Prepara a versão para o formato do badge (shields.io usa '--' para '-')
+          BADGE_VERSION=$(echo $LATEST_VERSION | sed 's/-/--/g')
+          
+          # Salva as variáveis para os próximos passos
+          echo "version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          echo "badge_version=$BADGE_VERSION" >> $GITHUB_OUTPUT
+
+      # 3. Atualiza o arquivo .md específico da placa
+      - name: Update ${{ matrix.device.file }}
+        run: |
+          # Usa o 'sed' para encontrar a linha do badge e substituir a versão no arquivo correto
+          sed -i "s|img.shields.io/badge/Firmware-.*-blue|img.shields.io/badge/Firmware-${{ steps.get_version.outputs.badge_version }}-blue|g" ${{ matrix.device.file }}
+
+      # 4. Faz o commit e push das mudanças (se houver alguma)
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # Mensagem de commit dinâmica, informando qual placa foi atualizada
+          commit_message: "Bot: Auto-update badge for ${{ matrix.device.name }} to v${{ steps.get_version.outputs.version }}"
+          branch: main
+          # O padrão de arquivo a ser verificado para commit também é dinâmico
+          file_pattern: ${{ matrix.device.file }}
