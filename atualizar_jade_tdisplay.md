@@ -1,6 +1,6 @@
 # 🔱 Atualizador Jade Wallet com Secure Boot
 
-![Firmware](https://img.shields.io/badge/Firmware-1.0.36--87--wbatt-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V1-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Firmware](https://img.shields.io/badge/Firmware-test-blue) ![Secure Boot](https://img.shields.io/badge/Secure%20Boot-V1-green) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 <p align="center">
   <a href="" target="_blank" rel="noopener noreferrer">
