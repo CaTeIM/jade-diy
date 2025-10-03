@@ -7,6 +7,7 @@ Parabéns por ter conquistado uma **Jade Wallet**! Você adquiriu uma hardware w
 Para garantir que sua carteira esteja sempre segura e funcional, mantenha o firmware atualizado.
 
 👉 [Atualizar Jade T-Display](https://github.com/CaTeIM/jade-diy/blob/main/atualizar_jade_tdisplay.md)
+
 👉 [Atualizar Jade T-Display S3](https://github.com/CaTeIM/jade-diy/blob/main/atualizar_jade_tdisplays3.md)
 
 ### ⚠️ ATENÇÃO: A Primeira Vez é com a Blockstream
