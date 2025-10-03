@@ -156,7 +156,6 @@ partitions_custom.csv
 old_atualizar_jade_wallet.md
 
 # Ignorar arquivos HTML específicos
-index.html
 test.html
 
 # Ignorar todos os arquivos de workflows do GitHub Actions
