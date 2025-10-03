@@ -1,7 +1,9 @@
-﻿# Script para automatizar a cópia dos arquivos de firmware da Jade DIY
+﻿# Script para automatizar a cópia dos arquivos de firmware da Jade Wallet
 #
 # COMO USAR:
 # 1. Compile e assine seu firmware normalmente (gerando o 'jade-signed.bin').
+# 1.1 Secure Boot V1 --> espsecure.py sign_data --version 1 --keyfile secure_boot_signing_key.pem -o build/jade-signed.bin build/jade.bin
+# 1.2 Secure Boot V2 --> espsecure.py sign_data --version 2 --keyfile secure_boot_signing_key_v2.pem -o build/jade-signed.bin build/jade.bin
 # 2. Abra um terminal PowerShell, navegue até a pasta do projeto e execute: .\deploy_firmware.ps1
 #
 
@@ -18,7 +20,7 @@ Clear-Host
 Write-Host "--- Script de Deploy para Firmware Jade DIY ---" -ForegroundColor Cyan
 
 # 1. Pergunta ao usuário as informações necessárias
-$placa = Read-Host -Prompt "Qual o nome da placa? (ex: tdisplay)"
+$placa = Read-Host -Prompt "Qual o nome da placa? (ex: tdisplay ou tdisplays3)"
 if ([string]::IsNullOrWhiteSpace($placa)) {
     Write-Host "Nome da placa não pode ser vazio. Abortando." -ForegroundColor Red
     Read-Host "Pressione Enter para sair..."
@@ -48,7 +50,6 @@ if (-not (Test-Path $destinoDir)) {
 
 # 4. Lista de arquivos para copiar e seus nomes de destino
 $arquivosParaCopiar = @{
-    # MUDANÇA: Agora o destino também é 'jade-signed.bin'
     (Join-Path $fonteBuildDir 'jade-signed.bin')                     = "jade-signed.bin";
     (Join-Path $fonteBuildDir 'ota_data_initial.bin')                = "ota_data_initial.bin";
     (Join-Path $fonteBuildDir 'partition_table\partition-table.bin') = "partition-table.bin";
@@ -67,33 +68,9 @@ foreach ($fonte in $arquivosParaCopiar.Keys) {
     }
 }
 
-# 6. Cria o arquivo manifest.json
-Write-Host "`nGerando manifest.json..."
-$manifestContent = [ordered]@{
-    name = "Jade DIY $versao for $placa"
-    builds = @(
-        [ordered]@{
-            chipFamily = "ESP32"
-            parts = @(
-                [ordered]@{ path = "jade-signed.bin"; offset = 65536 },
-                [ordered]@{ path = "ota_data_initial.bin"; offset = 57344 },
-                [ordered]@{ path = "partition-table.bin"; offset = 36864 }
-            )
-        }
-    )
-}
-
-# Converte para JSON e salva no arquivo
-$manifestJson = $manifestContent | ConvertTo-Json -Depth 5
-$manifestPath = Join-Path -Path $destinoDir -ChildPath "manifest.json"
-$manifestJson | Out-File -FilePath $manifestPath -Encoding utf8
-
-Write-Host "  [OK] manifest.json criado com sucesso!" -ForegroundColor Green
-
 # --- FIM DO SCRIPT ---
 Write-Host "`n--- Processo Concluído! ---" -ForegroundColor Cyan
 Write-Host "Verifique a pasta '$destinoDir' para confirmar os arquivos."
-Write-Host "Próximo passo: Não se esqueça de atualizar o arquivo 'index.html' com a nova versão!" -ForegroundColor Yellow
 
 # Pausa o script e aguarda o usuário pressionar Enter
 Write-Host "`n"

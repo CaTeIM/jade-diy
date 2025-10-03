@@ -6,7 +6,8 @@ Parabéns por ter conquistado uma **Jade Wallet**! Você adquiriu uma hardware w
 
 Para garantir que sua carteira esteja sempre segura e funcional, mantenha o firmware atualizado.
 
-👉 [Clique aqui para acessar o guia de atualização](https://github.com/CaTeIM/jade-diy/blob/main/atualizar_jade_wallet.md)
+👉 [Atualizar Jade T-Display](https://github.com/CaTeIM/jade-diy/blob/main/atualizar_jade_tdisplay.md)
+👉 [Atualizar Jade T-Display S3](https://github.com/CaTeIM/jade-diy/blob/main/atualizar_jade_tdisplays3.md)
 
 ### ⚠️ ATENÇÃO: A Primeira Vez é com a Blockstream
 
@@ -41,6 +42,23 @@ Com este **bypass**, você consegue assinar transações e fazer tudo o que prec
 
 [**Instalar**](https://sideswap.io/downloads/) SideSwap
 
+## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="25" height="25"/> Usando no Android: Mode Easy
+
+Android é a plataforma mais tranquila para a nossa Jade Wallet. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
+
+#### 💡 Dica de Ouro: A Conexão Falhou?
+
+Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontrar a Jade:
+
+1.  Vá até as **Configurações de Bluetooth** do seu celular Android.
+2.  Encontre a **"Jade"** na lista de dispositivos pareados.
+3.  Clique nela e escolha a opção **"Esquecer"** ou **"Desparear"**.
+4.  Tente conectar novamente pelo aplicativo. O processo de pareamento será refeito do zero e geralmente resolve o problema.
+
+[**Blockstream**](https://play.google.com/store/apps/details?id=com.greenaddress.greenbits_android_wallet)
+
+[**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
+
 ## ~<img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: QR Code~ ⚠️ ATENÇÃO: MÉTODO NÃO ESTÁ FUNCIONANDO
 
 Aqui temos nosso maior desafio. O app da Blockstream para iOS **não consegue parear via Bluetooth** com nossa placa. Mas, como bons engenheiros de gambiarra, temos uma solução elegante.
@@ -64,23 +82,6 @@ Pronto! A partir de agora, sua carteira estará configurada no Blockstream para 
 [**Blockstream**](https://apps.apple.com/us/app/green-bitcoin-wallet/id1402243590)
 
 [**SideSwap**](https://apps.apple.com/app/sideswap/id1556476417#?platform=iphone)
-
-## <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="25" height="25"/> Usando no Android: Mode Easy
-
-Android é a plataforma mais tranquila para a nossa Jade Wallet. A conexão Bluetooth geralmente funciona de primeira tanto com o **Blockstream** quanto com o **SideSwap**.
-
-#### 💡 Dica de Ouro: A Conexão Falhou?
-
-Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontrar a Jade:
-
-1.  Vá até as **Configurações de Bluetooth** do seu celular Android.
-2.  Encontre a **"Jade"** na lista de dispositivos pareados.
-3.  Clique nela e escolha a opção **"Esquecer"** ou **"Desparear"**.
-4.  Tente conectar novamente pelo aplicativo. O processo de pareamento será refeito do zero e geralmente resolve o problema.
-
-[**Blockstream**](https://play.google.com/store/apps/details?id=com.greenaddress.greenbits_android_wallet)
-
-[**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
 
 ## 🛒 Ainda não tem uma Jade Wallet? **ADQUIRA JÁ!**
 
