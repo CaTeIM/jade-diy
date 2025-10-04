@@ -9,10 +9,12 @@ assets/box/Blockstream-Jade-Box-Side.webp
 assets/box/Blockstream-Jade-Cards-Back.webp
 assets/box/Box Jade.cdr
 assets/box/Cópia_de_segurança_de_Box Jade.cdr
-assets/box/fonts/Caligor Sans Clean.7z
-assets/box/fonts/Compasse.7z
-assets/box/fonts/DIN Next LT Arabic Medium.7z
-assets/box/fonts/Huley 1967.7z
+assets/fonts/Caligor Sans Clean.7z
+assets/fonts/Compasse.7z
+assets/fonts/DIN Next LT Arabic Medium.7z
+assets/fonts/Huley 1967.7z
+assets/fonts/Inter.7z
+assets/fonts/Rigid Square.7z
 jade_secure_boot.md
 partitions_custom.csv
 old_atualizar_jade_wallet.md
