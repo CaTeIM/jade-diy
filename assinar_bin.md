@@ -8,7 +8,7 @@ O objetivo é criar um pacote de firmware que será aceito por uma placa que já
 
 ### 🔑 A Chave Mestra Original (`.pem`)
 
--   **REGRA DE OURO:** Para assinar uma nova atualização, você **DEVE** usar a mesma chave **`secure_boot_signing_key.pem`** ou **`secure_boot_signing_key_v2.pem`** que foi usada para travar a placa pela primeira vez.
+-   **REGRA DE OURO:** Para assinar uma nova atualização, você **DEVE** usar a mesma chave **`secure_boot_signing_key_v1.pem`** ou **`secure_boot_signing_key_v2.pem`** que foi usada para travar a placa pela primeira vez.
     
 -   Essa chave é gerada uma única vez. Guarde-a como se fosse a seed da sua carteira. Se você perdê-la, as placas travadas com ela nunca mais poderão ser atualizadas.
     
@@ -26,7 +26,7 @@ Antes de compilar, confirme estas configurações no seu projeto:
 	- Vá em `Security features` --->
     - Marque a opção `[*] Enable hardware Secure Boot in bootloader`.
     - Mude para **`Reflashable`** em `Secure bootloader mode (Reflashable)`.
-    - Verifique a chave utilizada **`secure_boot_signing_key.pem`**
+    - Verifique a chave utilizada **`secure_boot_signing_key_v1.pem`**
 
 	1.2. _**T-Display S3**_
 	- Vá em `Security features` --->
@@ -43,7 +43,7 @@ Antes de compilar, confirme estas configurações no seu projeto:
 
     2.2. _**T-Display S3:**_
     -   Vá em `Serial Flasher Config` --->
-    -   `Flash SPI mode`: Mude para **`QIO`**.
+    -   `Flash SPI mode`: Mude para **`DIO`**.
     -   `Flash SPI speed`: Mude para **`80MHz`**.
 
 ### 📦 Compilando e Assinando Manualmente
@@ -71,7 +71,7 @@ Antes de compilar, confirme estas configurações no seu projeto:
 
     ```py
     # T-Display com Secure Boot V1 
-    espsecure.py sign_data --version 1 --keyfile secure_boot_signing_key.pem -o build/jade-signed.bin build/jade.bin
+    espsecure.py sign_data --version 1 --keyfile secure_boot_signing_key_v1.pem -o build/jade-signed.bin build/jade.bin
 
     # T-Display S3 com Secure Boot V2 
     espsecure.py sign_data --version 2 --keyfile secure_boot_signing_key_v2.pem -o build/jade-signed.bin build/jade.bin
