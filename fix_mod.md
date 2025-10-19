@@ -88,8 +88,11 @@ Após a modificação:
 Para confirmar o sucesso:
 1. Conecte a TTGO ao PC.  
 2. Abra o SideSwap/Blockstream.  
-3. Verifique que o botão de Boot responde normalmente.  
-4. A comunicação serial funciona sem o ESP32 travar em modo Bootloader.
+3. Verifique que o botão de voltar responde normalmente.  
+4. A comunicação serial funciona sem o ESP32 travar o GPIO0.
+
+## ⚠️ IMPORTANTE
+Para fazer o `flash` precisa segurar o botão `GPIO0` até iniciar o processo de gravação, depois pode soltar.
 
 ## 🧠 Racional Técnico
 
