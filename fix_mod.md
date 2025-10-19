@@ -9,7 +9,7 @@ Placas **TTGO T-Display (ESP32)** equipadas com o chip **CH9102F (USB–Serial)*
 - O **ESP32 inicia normalmente o bootloader** e o firmware.  
 - Porém, ao abrir conexão serial (ex: Blockstream, SideSwap), o sistema **trava**.  
 - O **GPIO0** fica permanentemente em nível **baixo (LOW)**.  
-- O **botão de Boot** deixa de funcionar até que a placa seja desconectada da USB.  
+- O **botão de Boot** deixa de funcionar até que seja fechado o programa ou a placa seja desconectada da USB.  
 - O bug não é corrigido apenas com o ajuste de *“Disable Modem Handshake”* na porta COM do Windows, pois alguns apps reconfiguram o driver diretamente.
 
 ## ⚙️ Análise Técnica (Causa Raiz)
