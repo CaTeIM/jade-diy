@@ -22,24 +22,28 @@ No Windows, a comunicação USB tem suas manhas por causa do famoso bug do DTR. 
 
 #### **Para usar com Blockstream:**
 
-É obrigatório aplicar a **"Solução de Driver"** que documentamos no tutorial de instalação. Sem isso, a Jade não será reconhecida corretamente.
+~É obrigatório aplicar a **"Solução de Driver"** que documentamos no tutorial de instalação. Sem isso, a Jade não será reconhecida corretamente.~
 
-* **Lembrete Rápido:** Vá em `Gerenciador de Dispositivos` → `Portas (COM & LPT)` → `Propriedades da porta CH9102` → `Port Settings` → `Advanced...` e marque a opção **`Disable ModemHandShake`**.
+~* **Lembrete Rápido:** Vá em `Gerenciador de Dispositivos` → `Portas (COM & LPT)` → `Propriedades da porta CH9102` → `Port Settings` → `Advanced...` e marque a opção **`Disable ModemHandShake`**.~
+
+**Bug corrigido, apenas instalar e usar!**
 
 [**Instalar**](https://blockstream.com/app/) Blockstream
 
 #### **Para usar com SideSwap:**
 
-O **SideSwap** pode não respeitar a configuração do driver e ainda ativar o DTR, travando um dos botões. Mas não se preocupe, nosso firmware foi preparado para isso!
+~O **SideSwap** pode não respeitar a configuração do driver e ainda ativar o DTR, travando um dos botões. Mas não se preocupe, nosso firmware foi preparado para isso!~
 
-Você vai operar a Jade no **"Modo de Um Botão"**:
+~Você vai operar a Jade no **"Modo de Um Botão"**:~
 
-* **Botão da Esquerda (`Prev` / `GPIO0`):** Ficará **travado** e não responderá. Ignore-o.
-* **Botão da Direita (`Next` / `GPIO35`):** Será seu único controle.
-    * **Clique Curto:** Navega pelas opções (geralmente para frente/para baixo).
-    * **Clique Longo (segurar por 1 segundo):** **Confirma / Seleciona / OK**.
+~* **Botão da Esquerda (`Prev` / `GPIO0`):** Ficará **travado** e não responderá. Ignore-o.~
+~* **Botão da Direita (`Next` / `GPIO35`):** Será seu único controle.~
+~    * **Clique Curto:** Navega pelas opções (geralmente para frente/para baixo).~
+~    * **Clique Longo (segurar por 1 segundo):** **Confirma / Seleciona / OK**.~
 
-Com este **bypass**, você consegue assinar transações e fazer tudo o que precisa no **SideSwap**, mesmo com o bug do DTR ativo.
+~Com este **bypass**, você consegue assinar transações e fazer tudo o que precisa no **SideSwap**, mesmo com o bug do DTR ativo.~
+
+**Bug corrigido, apenas instalar e usar!**
 
 [**Instalar**](https://sideswap.io/downloads/) SideSwap
 
@@ -60,7 +64,7 @@ Se por algum motivo a conexão Bluetooth começar a falhar ou o app não encontr
 
 [**SideSwap**](https://play.google.com/store/apps/details?id=io.sideswap)
 
-## ~<img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: QR Code~ ⚠️ ATENÇÃO: MÉTODO NÃO ESTÁ FUNCIONANDO
+## ~<img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/Apple_logo_grey.svg" height="25"/> Usando no iOS: QR Code~ ⚠️ ATENÇÃO: MÉTODO ESTÁ FUNCIONANDO APENAS PARA MOSTRAR SALDO EM BTC
 
 Aqui temos nosso maior desafio. O app da Blockstream para iOS **não consegue parear via Bluetooth** com nossa placa. Mas, como bons engenheiros de gambiarra, temos uma solução elegante.
 
