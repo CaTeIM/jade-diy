@@ -94,6 +94,9 @@ Para confirmar o sucesso:
 ## ⚠️ IMPORTANTE
 Para fazer o `flash` precisa segurar o botão `GPIO0` até iniciar o processo de gravação, depois pode soltar.
 
+### 📎 Observação
+Pode ser usado sem o capacitor. O bug é corrigido removendo o resistor R19, mas por precaução foi adicionado o capacitor. Caso não tenha acesso ao capacitor de forma fácil, remova apenas o resistor R19 e faça os testes de conexão via USB nos programas Blockstream e SideSwap.
+
 ## 🧠 Racional Técnico
 
 | Antes (R19 = 10 kΩ) | Depois (C = 100 nF) |
