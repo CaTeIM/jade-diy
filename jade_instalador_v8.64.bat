@@ -69,7 +69,7 @@ echo Versão padrão do ESP-IDF: %DEFAULT_VERSION%
 echo.
 powershell -Command "$releases = (Invoke-WebRequest -Uri 'https://api.github.com/repos/espressif/idf-installer/releases' -UseBasicParsing | ConvertFrom-Json); $offline = $releases | Where-Object { $_.tag_name -like 'offline-*' } | Select-Object -First 5; $i=1; foreach($r in $offline) { $v = $r.tag_name -replace 'offline-',''; Write-Host \"  [$i] $v\"; $i++ }"
 echo.
-set /p ESP_IDF_VERSION=Digite a versão do ESP-IDF (pressione Enter para usar %DEFAULT_VERSION%): 
+set /p ESP_IDF_VERSION=Digite a versão do ESP-IDF (pressione Enter para usar %DEFAULT_VERSION%):
 
 REM Usar a versão padrão se o usuário não inserir uma versão
 if "%ESP_IDF_VERSION%"=="" (
@@ -172,7 +172,7 @@ if "%INSTALL_PYTHON%"=="NO" (
         powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-BitsTransfer -Source '%PYTHON_URL%' -Destination '%PYTHON_INSTALLER%' -Description 'Python Installer' -DisplayName 'Baixando Python'"
         echo Download concluído.
     )
-    
+
     echo Instalando o Python...
     "%PYTHON_INSTALLER%" /passive InstallAllUsers=1 PrependPath=1 Include_test=0
     if !ERRORLEVEL! neq 0 (
@@ -214,13 +214,13 @@ if "%INSTALL_GIT%"=="NO" (
     )
 
     echo Buscando a última versão do Git for Windows...
-    
+
     REM Obter URL da última versão do Git for Windows (64-bit)
         set "GIT_INSTALLER=Git-2.51.2-64-bit.exe"
         set "GIT_URL=https://github.com/git-for-windows/git/releases/download/v2.51.2.windows.1/Git-2.51.2-64-bit.exe"
-    
+
     for /f "delims=" %%U in ('powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/git-for-windows/git/releases/latest'; $asset = $release.assets | Where-Object { $_.name -like '*64-bit.exe' -and $_.name -notlike '*MinGit*' } | Select-Object -First 1; if($asset) { Write-Output $asset.browser_download_url } else { Write-Output '' } } catch { Write-Output '' }"') do set "GIT_URL_LATEST=%%U"
-    
+
     if not "!GIT_URL_LATEST!"=="" (
         set "GIT_URL=!GIT_URL_LATEST!"
         for %%F in ("!GIT_URL!") do set "GIT_INSTALLER=%%~nxF"
@@ -242,7 +242,7 @@ if "%INSTALL_GIT%"=="NO" (
         )
         echo Download concluído.
     )
-    
+
     echo Instalando o Git...
     "!GIT_INSTALLER!" /SILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
     if !ERRORLEVEL! neq 0 (
@@ -529,7 +529,9 @@ if not defined OPTION_%CHOICE% (
     goto SELECT_CONFIG
 )
 
+setlocal enabledelayedexpansion
 set "SELECTED_CONFIG=!OPTION_%CHOICE%!"
+endlocal & set "SELECTED_CONFIG=%SELECTED_CONFIG%"
 echo.
 echo Você escolheu: %SELECTED_CONFIG%
 echo.
@@ -539,13 +541,40 @@ if errorlevel 2 goto SELECT_CONFIG
 REM Copiar o arquivo de configuração escolhido para a pasta Jade e renomeá-lo
 echo.
 echo Copiando arquivo de configuração...
-copy /y "%CONFIGS_DIR%\%SELECTED_CONFIG%" "%JADE_REPO_DIR%\sdkconfig.defaults"
+copy /y "%CONFIGS_DIR%\%SELECTED_CONFIG%" "%JADE_REPO_DIR%\sdkconfig"
 if %ERRORLEVEL% neq 0 (
     echo Falha ao copiar e renomear o arquivo de configuração.
     pause
     goto MENU
 ) else (
     echo Arquivo de configuração copiado e renomeado com sucesso.
+)
+
+REM Aplicar configuração específica para Waveshare S3 Touch LCD2
+if /I "%SELECTED_CONFIG%"=="sdkconfig_display_waveshares3_touch_lcd2.defaults" (
+    echo.
+    echo Aplicando configuração específica para Waveshare S3 Touch LCD2...
+    echo Habilitando CONFIG_JADE_USE_USB_JTAG_SERIAL...
+
+    setlocal enabledelayedexpansion
+
+    set "SDKCONFIG_FILE=%JADE_REPO_DIR%\sdkconfig"
+    set "SDKCONFIG_TEMP=%JADE_REPO_DIR%\sdkconfig.tmp"
+
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "(Get-Content '!SDKCONFIG_FILE!') -replace '# CONFIG_JADE_USE_USB_JTAG_SERIAL is not set', 'CONFIG_JADE_USE_USB_JTAG_SERIAL=y' | Set-Content '!SDKCONFIG_TEMP!'"
+
+    if exist "!SDKCONFIG_TEMP!" (
+        move /y "!SDKCONFIG_TEMP!" "!SDKCONFIG_FILE!" >nul 2>&1
+        if !ERRORLEVEL! equ 0 (
+            echo Configuração USB JTAG serial habilitada com sucesso.
+        ) else (
+            echo Aviso: Não foi possível aplicar a configuração USB JTAG serial.
+        )
+    ) else (
+        echo Aviso: Não foi possível criar arquivo temporário para modificação.
+    )
+
+    endlocal
 )
 
 echo O processo de configuração foi concluído.
