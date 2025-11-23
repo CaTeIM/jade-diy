@@ -438,7 +438,7 @@ set EXPORT_ERRORLEVEL=%ERRORLEVEL%
 REM Verificar se ocorreu erro de ambiente python não encontrado
 findstr /C:"ESP-IDF Python virtual environment not found" "%EXPORT_LOG%" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-    echo [translate:Ambiente python ESP-IDF nao encontrado], executando install.bat...
+    echo Ambiente python ESP-IDF não encontrado, executando install.bat...
     call "%IDF_PATH%\install.bat"
     if ERRORLEVEL 1 (
         echo Falha ao instalar o ambiente Python.
@@ -448,7 +448,7 @@ if %ERRORLEVEL% EQU 0 (
     REM Tentar export.bat novamente após instalação
     call "%IDF_PATH%\export.bat"
     if ERRORLEVEL 1 (
-        echo Falha ao inicializar o ambiente ESP-IDF mesmo apos instalar Python.
+        echo Falha ao inicializar o ambiente ESP-IDF mesmo após instalar Python.
         pause
         goto MENU
     )
@@ -541,7 +541,7 @@ if errorlevel 2 goto SELECT_CONFIG
 REM Copiar o arquivo de configuração escolhido para a pasta Jade e renomeá-lo
 echo.
 echo Copiando arquivo de configuração...
-copy /y "%CONFIGS_DIR%\%SELECTED_CONFIG%" "%JADE_REPO_DIR%\sdkconfig"
+copy /y "%CONFIGS_DIR%\%SELECTED_CONFIG%" "%JADE_REPO_DIR%\sdkconfig.defaults"
 if %ERRORLEVEL% neq 0 (
     echo Falha ao copiar e renomear o arquivo de configuração.
     pause
@@ -558,20 +558,19 @@ if /I "%SELECTED_CONFIG%"=="sdkconfig_display_waveshares3_touch_lcd2.defaults" (
 
     setlocal enabledelayedexpansion
 
-    set "SDKCONFIG_FILE=%JADE_REPO_DIR%\sdkconfig"
-    set "SDKCONFIG_TEMP=%JADE_REPO_DIR%\sdkconfig.tmp"
+    set "SDKCONFIG_DEFAULTS=%JADE_REPO_DIR%\sdkconfig.defaults"
 
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "(Get-Content '!SDKCONFIG_FILE!') -replace '# CONFIG_JADE_USE_USB_JTAG_SERIAL is not set', 'CONFIG_JADE_USE_USB_JTAG_SERIAL=y' | Set-Content '!SDKCONFIG_TEMP!'"
-
-    if exist "!SDKCONFIG_TEMP!" (
-        move /y "!SDKCONFIG_TEMP!" "!SDKCONFIG_FILE!" >nul 2>&1
-        if !ERRORLEVEL! equ 0 (
-            echo Configuração USB JTAG serial habilitada com sucesso.
-        ) else (
-            echo Aviso: Não foi possível aplicar a configuração USB JTAG serial.
-        )
+    REM Verificar se a configuração já existe no arquivo
+    findstr /C:"CONFIG_JADE_USE_USB_JTAG_SERIAL=y" "!SDKCONFIG_DEFAULTS!" >nul 2>&1
+    if !ERRORLEVEL! NEQ 0 (
+        REM Remover linha comentada se existir
+        powershell -NoProfile -ExecutionPolicy Bypass -Command "(Get-Content '!SDKCONFIG_DEFAULTS!') | Where-Object { $_ -notmatch '# CONFIG_JADE_USE_USB_JTAG_SERIAL is not set' } | Set-Content '!SDKCONFIG_DEFAULTS!'"
+        
+        REM Adicionar configuração habilitada ao final do arquivo
+        echo CONFIG_JADE_USE_USB_JTAG_SERIAL=y >> "!SDKCONFIG_DEFAULTS!"
+        echo Configuração USB JTAG serial habilitada com sucesso.
     ) else (
-        echo Aviso: Não foi possível criar arquivo temporário para modificação.
+        echo Configuração USB JTAG serial já estava habilitada.
     )
 
     endlocal
@@ -596,9 +595,11 @@ if not exist "%~dp0Jade" (
 echo.
 echo Por favor, selecione uma opção:
 echo.
-echo [1] Compilar e Instalar
-echo [2] Instalar apenas (sem compilar)
-echo [3] Retornar ao menu principal
+echo [1] Compilar
+echo [2] Compilar e Instalar
+echo [3] Instalar (já compilado)
+echo.
+echo [0] Retornar ao menu principal
 echo.
 
 set "INSTALL_OPTION="
@@ -611,10 +612,12 @@ if "%INSTALL_OPTION%"=="" (
 )
 
 if "%INSTALL_OPTION%"=="1" (
-    goto COMPILE_AND_INSTALL
+    goto COMPILE
 ) else if "%INSTALL_OPTION%"=="2" (
-    goto INSTALL_ONLY
+    goto COMPILE_AND_INSTALL
 ) else if "%INSTALL_OPTION%"=="3" (
+    goto INSTALL_ONLY
+) else if "%INSTALL_OPTION%"=="0" (
     goto MENU
 ) else (
     echo Opção inválida. Retornando ao menu principal.
@@ -622,7 +625,7 @@ if "%INSTALL_OPTION%"=="1" (
     goto MENU
 )
 
-:COMPILE_AND_INSTALL
+:COMPILE
 call :SELECT_IDF_VERSION
 
 REM Verificar se o export.bat existe na versão selecionada
@@ -643,7 +646,7 @@ set EXPORT_ERRORLEVEL=%ERRORLEVEL%
 REM Verificar se ocorreu erro de ambiente python não encontrado
 findstr /C:"ESP-IDF Python virtual environment not found" "%EXPORT_LOG%" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-    echo [translate:Ambiente python ESP-IDF nao encontrado], executando install.bat...
+    echo Ambiente python ESP-IDF não encontrado, executando install.bat...
     call "%IDF_PATH%\install.bat"
     if ERRORLEVEL 1 (
         echo Falha ao instalar o ambiente Python.
@@ -653,7 +656,7 @@ if %ERRORLEVEL% EQU 0 (
     REM Tentar export.bat novamente após instalação
     call "%IDF_PATH%\export.bat"
     if ERRORLEVEL 1 (
-        echo Falha ao inicializar o ambiente ESP-IDF mesmo apos instalar Python.
+        echo Falha ao inicializar o ambiente ESP-IDF mesmo após instalar Python.
         pause
         goto MENU
     )
@@ -681,6 +684,115 @@ for /f "delims=" %%I in ('where python') do (
     goto :FOUND_IDF_PYTHON
 )
 :FOUND_IDF_PYTHON
+if defined IDF_PYTHON (
+    for %%D in ("!IDF_PYTHON!") do set "IDF_PYTHON_DIR=%%~dpD"
+    if not exist "!IDF_PYTHON_DIR!python3.exe" (
+        copy /y "!IDF_PYTHON!" "!IDF_PYTHON_DIR!python3.exe" > NUL 2>&1
+        if !ERRORLEVEL! equ 0 (
+            echo Alias python3 criado com sucesso.
+        ) else (
+            echo Aviso: Não foi possível criar alias python3.
+        )
+    ) else (
+        echo Alias python3 já existe.
+    )
+)
+
+REM Navegar para a pasta Jade
+cd /d "%cd%\Jade"
+
+REM Limpar o diretório de build para evitar conflitos
+idf.py fullclean
+
+REM Compilar o projeto
+echo Compilando o projeto...
+idf.py build
+if %ERRORLEVEL% neq 0 (
+    echo Falha na compilação do projeto.
+    pause
+    goto MENU
+)
+
+REM Extrair os binários após a compilação
+echo Extraindo binários...
+if not exist "%cd%\bin_jade" mkdir "%cd%\bin_jade"
+
+copy /y "build\bootloader\bootloader.bin" "bin_jade\"
+copy /y "build\jade.bin" "bin_jade\"
+copy /y "build\ota_data_initial.bin" "bin_jade\"
+copy /y "build\partition_table\partition-table.bin" "bin_jade\"
+
+echo Binários extraídos com sucesso.
+
+if "%SELECTED_PORT%"=="ABORT" (
+    echo Operação cancelada pelo usuário.
+    pause
+    goto MENU
+)
+
+REM Após a conclusão, retornar ao menu
+pause
+goto MENU
+
+:COMPILE_AND_INSTALL
+call :SELECT_IDF_VERSION
+
+REM Verificar se o export.bat existe na versão selecionada
+if not exist "%IDF_PATH%\export.bat" (
+    echo O arquivo export.bat não foi encontrado na pasta %IDF_PATH%.
+    pause
+    goto MENU
+)
+
+REM Inicializar o ambiente do ESP-IDF
+echo Inicializando o ambiente do ESP-IDF na versão %SELECTED_IDF_VERSION%...
+
+REM Definir arquivo temporário para captura da saída de export.bat
+set "EXPORT_LOG=%TEMP%\esp_export_log.txt"
+call "%IDF_PATH%\export.bat" > "%EXPORT_LOG%" 2>&1
+set EXPORT_ERRORLEVEL=%ERRORLEVEL%
+
+REM Verificar se ocorreu erro de ambiente python não encontrado
+findstr /C:"ESP-IDF Python virtual environment not found" "%EXPORT_LOG%" >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo Ambiente python ESP-IDF não encontrado, executando install.bat...
+    call "%IDF_PATH%\install.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao instalar o ambiente Python.
+        pause
+        goto MENU
+    )
+    REM Tentar export.bat novamente após instalação
+    call "%IDF_PATH%\export.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao inicializar o ambiente ESP-IDF mesmo após instalar Python.
+        pause
+        goto MENU
+    )
+) else (
+    if %EXPORT_ERRORLEVEL% NEQ 0 (
+        echo Falha ao inicializar o ambiente ESP-IDF.
+        pause
+        goto MENU
+    )
+)
+
+del "%EXPORT_LOG%" 2>nul
+
+REM Verificar se a inicialização foi bem-sucedida
+if errorlevel 1 (
+    echo Falha ao inicializar o ambiente do ESP-IDF.
+    pause
+    goto MENU
+)
+
+REM Criar python3 no ambiente Python do ESP-IDF
+echo Configurando alias python3...
+for /f "delims=" %%I in ('where python') do (
+    set "IDF_PYTHON=%%I"
+    goto :FOUND_IDF_PYTHON2
+)
+:FOUND_IDF_PYTHON2
 if defined IDF_PYTHON (
     for %%D in ("!IDF_PYTHON!") do set "IDF_PYTHON_DIR=%%~dpD"
     if not exist "!IDF_PYTHON_DIR!python3.exe" (
@@ -753,6 +865,279 @@ if not exist "%IDF_PATH%\export.bat" (
     goto MENU
 )
 
+REM Navegar para a pasta Jade
+cd /d "%~dp0\Jade"
+
+REM Verificar se os binários existem
+if not exist "%cd%\bin_jade\bootloader.bin" (
+    echo.
+    echo ================================================
+    echo ERRO: Os binários não foram encontrados!
+    echo ================================================
+    echo.
+    echo A pasta bin_jade não contém os arquivos compilados.
+    echo Certifique-se de que você compilou o projeto primeiro usando:
+    echo   [1] Compilar  ou  [2] Compilar e Instalar
+    echo.
+    pause
+    goto MENU
+)
+
+:VERIFY_CONFIG
+REM Verificar qual configuração foi usada
+echo.
+echo ================================================
+echo   Verificando informações da compilação
+echo ================================================
+echo.
+
+set "SDKCONFIG_FILE=%cd%\sdkconfig.defaults"
+set "CONFIG_DETECTED=Não identificada"
+
+if exist "%SDKCONFIG_FILE%" (
+    echo Analisando sdkconfig.defaults...
+    
+    REM Detectar tipo de placa baseado em CONFIG_BOARD_TYPE_
+    findstr /C:"CONFIG_BOARD_TYPE_JADE=y" "%SDKCONFIG_FILE%" >nul 2>&1
+    if !ERRORLEVEL! EQU 0 (
+        set "CONFIG_DETECTED=Blockstream Jade v1 (wheel)"
+    ) else (
+        findstr /C:"CONFIG_BOARD_TYPE_JADE_V1_1=y" "%SDKCONFIG_FILE%" >nul 2>&1
+        if !ERRORLEVEL! EQU 0 (
+            set "CONFIG_DETECTED=Blockstream Jade v1.1 (rocker)"
+        ) else (
+            findstr /C:"CONFIG_BOARD_TYPE_JADE_V2=y" "%SDKCONFIG_FILE%" >nul 2>&1
+            if !ERRORLEVEL! EQU 0 (
+                set "CONFIG_DETECTED=Blockstream Jade v2 (esp32s3)"
+            ) else (
+                findstr /C:"CONFIG_BOARD_TYPE_M5_FIRE=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                if !ERRORLEVEL! EQU 0 (
+                    set "CONFIG_DETECTED=M5Stack Fire"
+                ) else (
+                    findstr /C:"CONFIG_BOARD_TYPE_M5_BLACK_GRAY=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                    if !ERRORLEVEL! EQU 0 (
+                        set "CONFIG_DETECTED=M5Stack Black/Gray"
+                    ) else (
+                        findstr /C:"CONFIG_BOARD_TYPE_M5_CORE2=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                        if !ERRORLEVEL! EQU 0 (
+                            set "CONFIG_DETECTED=M5Stack Core 2"
+                        ) else (
+                            findstr /C:"CONFIG_BOARD_TYPE_M5_CORES3=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                            if !ERRORLEVEL! EQU 0 (
+                                set "CONFIG_DETECTED=M5Stack Core S3"
+                            ) else (
+                                findstr /C:"CONFIG_BOARD_TYPE_M5_STICKC_PLUS=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                                if !ERRORLEVEL! EQU 0 (
+                                    set "CONFIG_DETECTED=M5StickC Plus"
+                                ) else (
+                                    findstr /C:"CONFIG_BOARD_TYPE_M5_STICKC_PLUS_2=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                                    if !ERRORLEVEL! EQU 0 (
+                                        set "CONFIG_DETECTED=M5StickC Plus 2"
+                                    ) else (
+                                        findstr /C:"CONFIG_BOARD_TYPE_TTGO_TDISPLAY=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                                        if !ERRORLEVEL! EQU 0 (
+                                            set "CONFIG_DETECTED=TTGO T-Display"
+                                        ) else (
+                                            findstr /C:"CONFIG_BOARD_TYPE_TTGO_TDISPLAYS3=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                                            if !ERRORLEVEL! EQU 0 (
+                                                set "CONFIG_DETECTED=TTGO T-Display S3"
+                                            ) else (
+                                                findstr /C:"CONFIG_BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                                                if !ERRORLEVEL! EQU 0 (
+                                                    set "CONFIG_DETECTED=TTGO T-Display S3 Pro Camera"
+                                                ) else (
+                                                    findstr /C:"CONFIG_BOARD_TYPE_TTGO_TWATCHS3=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                                                    if !ERRORLEVEL! EQU 0 (
+                                                        set "CONFIG_DETECTED=TTGO T-Watch S3"
+                                                    ) else (
+                                                        findstr /C:"CONFIG_BOARD_TYPE_WS_TOUCH_LCD2=y" "%SDKCONFIG_FILE%" >nul 2>&1
+                                                        if !ERRORLEVEL! EQU 0 (
+                                                            set "CONFIG_DETECTED=Waveshare S3 Touch LCD 2"
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    
+    echo Configuração detectada: !CONFIG_DETECTED!
+) else (
+    echo AVISO: Arquivo sdkconfig.defaults não encontrado.
+)
+
+REM Verificar data da última compilação
+if exist "%cd%\build\jade.bin" (
+    for %%F in ("%cd%\build\jade.bin") do (
+        echo Última compilação: %%~tF
+    )
+) else if exist "%cd%\bin_jade\jade.bin" (
+    for %%F in ("%cd%\bin_jade\jade.bin") do (
+        echo Última extração de binários: %%~tF
+    )
+)
+
+echo.
+echo ================================================
+echo.
+
+REM Perguntar se deseja alterar configuração ou seguir
+choice /C STC /M "Deseja [S]eguir, [T]rocar configuração ou [C]ancelar"
+if errorlevel 3 (
+    echo Instalação cancelada pelo usuário.
+    pause
+    goto MENU
+)
+if errorlevel 2 (
+    REM Usuário quer trocar a configuração
+    goto CHANGE_CONFIG_FOR_INSTALL
+)
+if errorlevel 1 (
+    REM Usuário quer seguir com a configuração atual
+    goto PROCEED_WITH_INSTALL
+)
+
+:CHANGE_CONFIG_FOR_INSTALL
+REM Listar configurações disponíveis
+echo.
+echo Por favor, escolha a nova configuração para o dispositivo:
+echo.
+
+set "CONFIGS_DIR=%cd%\configs"
+set /a COUNT=1
+
+REM Limpar variáveis temporárias
+for /F "tokens=*" %%A in ('set CONFIG_OPTION_ 2^>NUL') do set "%%A="
+
+REM Listar todas as opções disponíveis
+for %%f in ("%CONFIGS_DIR%\sdkconfig_display_*.defaults") do (
+    echo [!COUNT!] %%~nxf
+    set "CONFIG_OPTION_!COUNT!=%%~nxf"
+    set /a COUNT+=1
+)
+
+if %COUNT% EQU 1 (
+    echo Nenhuma configuração encontrada em %CONFIGS_DIR%.
+    pause
+    goto MENU
+)
+
+echo.
+set "NEW_CONFIG_CHOICE="
+set /p NEW_CONFIG_CHOICE=Digite o número da configuração desejada: 
+
+if not defined CONFIG_OPTION_%NEW_CONFIG_CHOICE% (
+    echo Opção inválida.
+    pause
+    goto CHANGE_CONFIG_FOR_INSTALL
+)
+
+setlocal enabledelayedexpansion
+set "NEW_SELECTED_CONFIG=!CONFIG_OPTION_%NEW_CONFIG_CHOICE%!"
+endlocal & set "NEW_SELECTED_CONFIG=%NEW_SELECTED_CONFIG%"
+
+echo.
+echo Você escolheu: %NEW_SELECTED_CONFIG%
+echo.
+choice /C SC /M "Deseja [S]eguir ou [C]ancelar"
+if errorlevel 2 goto CHANGE_CONFIG_FOR_INSTALL
+
+REM Copiar nova configuração
+echo.
+echo Copiando nova configuração...
+copy /y "%CONFIGS_DIR%\%NEW_SELECTED_CONFIG%" "%cd%\sdkconfig.defaults"
+if %ERRORLEVEL% neq 0 (
+    echo Falha ao copiar configuração.
+    pause
+    goto MENU
+) else (
+    echo Configuração copiada com sucesso.
+)
+
+REM Aplicar configuração específica para Waveshare S3 Touch LCD2
+if /I "%NEW_SELECTED_CONFIG%"=="sdkconfig_display_waveshares3_touch_lcd2.defaults" (
+    echo.
+    echo Aplicando configuração específica para Waveshare S3 Touch LCD2...
+    echo Habilitando CONFIG_JADE_USE_USB_JTAG_SERIAL...
+
+    setlocal enabledelayedexpansion
+
+    set "SDKCONFIG_DEFAULTS=%cd%\sdkconfig.defaults"
+
+    REM Verificar se a configuração já existe no arquivo
+    findstr /C:"CONFIG_JADE_USE_USB_JTAG_SERIAL=y" "!SDKCONFIG_DEFAULTS!" >nul 2>&1
+    if !ERRORLEVEL! NEQ 0 (
+        REM Remover linha comentada se existir
+        powershell -NoProfile -ExecutionPolicy Bypass -Command "(Get-Content '!SDKCONFIG_DEFAULTS!') | Where-Object { $_ -notmatch '# CONFIG_JADE_USE_USB_JTAG_SERIAL is not set' } | Set-Content '!SDKCONFIG_DEFAULTS!'"
+        
+        REM Adicionar configuração habilitada ao final do arquivo
+        echo CONFIG_JADE_USE_USB_JTAG_SERIAL=y >> "!SDKCONFIG_DEFAULTS!"
+        echo Configuração USB JTAG serial habilitada com sucesso.
+    ) else (
+        echo Configuração USB JTAG serial já estava habilitada.
+    )
+
+    endlocal
+)
+
+echo.
+echo ================================================
+echo IMPORTANTE: Nova configuração aplicada!
+echo ================================================
+echo.
+echo Com a nova configuração, o projeto precisa ser recompilado.
+echo.
+echo Escolha uma opção:
+echo [1] Recompilar agora e depois instalar
+echo [2] Apenas recompilar (sem instalar)
+echo [3] Instalar binários antigos (não recomendado)
+echo.
+echo [0] Cancelar e voltar ao menu
+echo.
+
+set "RECOMPILE_CHOICE="
+set /p RECOMPILE_CHOICE=Digite sua escolha: 
+
+if "%RECOMPILE_CHOICE%"=="1" (
+    goto RECOMPILE_AND_INSTALL_NEW_CONFIG
+) else if "%RECOMPILE_CHOICE%"=="2" (
+    goto RECOMPILE_ONLY_NEW_CONFIG
+) else if "%RECOMPILE_CHOICE%"=="3" (
+    echo.
+    echo AVISO: Você está instalando binários compilados com configuração diferente!
+    echo Isso pode causar problemas no dispositivo.
+    echo.
+    choice /C SC /M "Tem certeza que deseja [S]eguir ou [C]ancelar"
+    if errorlevel 2 (
+        echo Operação cancelada.
+        pause
+        goto MENU
+    )
+    goto VERIFY_CONFIG
+) else if "%RECOMPILE_CHOICE%"=="0" (
+    echo Operação cancelada.
+    pause
+    goto MENU
+) else (
+    echo Opção inválida.
+    pause
+    goto CHANGE_CONFIG_FOR_INSTALL
+)
+
+:RECOMPILE_ONLY_NEW_CONFIG
+echo.
+echo ================================================
+echo Recompilando projeto com nova configuração...
+echo ================================================
+echo.
+
 REM Inicializar o ambiente do ESP-IDF
 echo Inicializando o ambiente do ESP-IDF na versão %SELECTED_IDF_VERSION%...
 
@@ -764,7 +1149,7 @@ set EXPORT_ERRORLEVEL=%ERRORLEVEL%
 REM Verificar se ocorreu erro de ambiente python não encontrado
 findstr /C:"ESP-IDF Python virtual environment not found" "%EXPORT_LOG%" >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-    echo [translate:Ambiente python ESP-IDF nao encontrado], executando install.bat...
+    echo Ambiente python ESP-IDF não encontrado, executando install.bat...
     call "%IDF_PATH%\install.bat"
     if ERRORLEVEL 1 (
         echo Falha ao instalar o ambiente Python.
@@ -774,7 +1159,210 @@ if %ERRORLEVEL% EQU 0 (
     REM Tentar export.bat novamente após instalação
     call "%IDF_PATH%\export.bat"
     if ERRORLEVEL 1 (
-        echo Falha ao inicializar o ambiente ESP-IDF mesmo apos instalar Python.
+        echo Falha ao inicializar o ambiente ESP-IDF mesmo após instalar Python.
+        pause
+        goto MENU
+    )
+) else (
+    if %EXPORT_ERRORLEVEL% NEQ 0 (
+        echo Falha ao inicializar o ambiente ESP-IDF.
+        pause
+        goto MENU
+    )
+)
+
+del "%EXPORT_LOG%" 2>nul
+
+REM Criar python3 no ambiente Python do ESP-IDF
+echo Configurando alias python3...
+for /f "delims=" %%I in ('where python') do (
+    set "IDF_PYTHON=%%I"
+    goto :FOUND_IDF_PYTHON_RECOMPILE
+)
+:FOUND_IDF_PYTHON_RECOMPILE
+if defined IDF_PYTHON (
+    for %%D in ("!IDF_PYTHON!") do set "IDF_PYTHON_DIR=%%~dpD"
+    if not exist "!IDF_PYTHON_DIR!python3.exe" (
+        copy /y "!IDF_PYTHON!" "!IDF_PYTHON_DIR!python3.exe" > NUL 2>&1
+        if !ERRORLEVEL! equ 0 (
+            echo Alias python3 criado com sucesso.
+        ) else (
+            echo Aviso: Não foi possível criar alias python3.
+        )
+    ) else (
+        echo Alias python3 já existe.
+    )
+)
+
+REM Limpar o diretório de build
+echo Limpando build anterior...
+idf.py fullclean
+
+REM Compilar o projeto
+echo Compilando o projeto...
+idf.py build
+if %ERRORLEVEL% neq 0 (
+    echo Falha na compilação do projeto.
+    pause
+    goto MENU
+)
+
+REM Extrair os binários após a compilação
+echo Extraindo binários...
+if not exist "%cd%\bin_jade" mkdir "%cd%\bin_jade"
+
+copy /y "build\bootloader\bootloader.bin" "bin_jade\"
+copy /y "build\jade.bin" "bin_jade\"
+copy /y "build\ota_data_initial.bin" "bin_jade\"
+copy /y "build\partition_table\partition-table.bin" "bin_jade\"
+
+echo.
+echo ================================================
+echo Compilação concluída com sucesso!
+echo ================================================
+echo Binários extraídos para: bin_jade\
+echo.
+pause
+goto MENU
+
+:RECOMPILE_AND_INSTALL_NEW_CONFIG
+echo.
+echo ================================================
+echo Recompilando projeto com nova configuração...
+echo ================================================
+echo.
+
+REM Inicializar o ambiente do ESP-IDF
+echo Inicializando o ambiente do ESP-IDF na versão %SELECTED_IDF_VERSION%...
+
+REM Definir arquivo temporário para captura da saída de export.bat
+set "EXPORT_LOG=%TEMP%\esp_export_log.txt"
+call "%IDF_PATH%\export.bat" > "%EXPORT_LOG%" 2>&1
+set EXPORT_ERRORLEVEL=%ERRORLEVEL%
+
+REM Verificar se ocorreu erro de ambiente python não encontrado
+findstr /C:"ESP-IDF Python virtual environment not found" "%EXPORT_LOG%" >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo Ambiente python ESP-IDF não encontrado, executando install.bat...
+    call "%IDF_PATH%\install.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao instalar o ambiente Python.
+        pause
+        goto MENU
+    )
+    REM Tentar export.bat novamente após instalação
+    call "%IDF_PATH%\export.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao inicializar o ambiente ESP-IDF mesmo após instalar Python.
+        pause
+        goto MENU
+    )
+) else (
+    if %EXPORT_ERRORLEVEL% NEQ 0 (
+        echo Falha ao inicializar o ambiente ESP-IDF.
+        pause
+        goto MENU
+    )
+)
+
+del "%EXPORT_LOG%" 2>nul
+
+REM Criar python3 no ambiente Python do ESP-IDF
+echo Configurando alias python3...
+for /f "delims=" %%I in ('where python') do (
+    set "IDF_PYTHON=%%I"
+    goto :FOUND_IDF_PYTHON_RECOMPILE_INSTALL
+)
+:FOUND_IDF_PYTHON_RECOMPILE_INSTALL
+if defined IDF_PYTHON (
+    for %%D in ("!IDF_PYTHON!") do set "IDF_PYTHON_DIR=%%~dpD"
+    if not exist "!IDF_PYTHON_DIR!python3.exe" (
+        copy /y "!IDF_PYTHON!" "!IDF_PYTHON_DIR!python3.exe" > NUL 2>&1
+        if !ERRORLEVEL! equ 0 (
+            echo Alias python3 criado com sucesso.
+        ) else (
+            echo Aviso: Não foi possível criar alias python3.
+        )
+    ) else (
+        echo Alias python3 já existe.
+    )
+)
+
+REM Limpar o diretório de build
+echo Limpando build anterior...
+idf.py fullclean
+
+REM Compilar o projeto
+echo Compilando o projeto...
+idf.py build
+if %ERRORLEVEL% neq 0 (
+    echo Falha na compilação do projeto.
+    pause
+    goto MENU
+)
+
+REM Extrair os binários após a compilação
+echo Extraindo binários...
+if not exist "%cd%\bin_jade" mkdir "%cd%\bin_jade"
+
+copy /y "build\bootloader\bootloader.bin" "bin_jade\"
+copy /y "build\jade.bin" "bin_jade\"
+copy /y "build\ota_data_initial.bin" "bin_jade\"
+copy /y "build\partition_table\partition-table.bin" "bin_jade\"
+
+echo Binários extraídos com sucesso.
+echo.
+echo ================================================
+echo Compilação concluída! Prosseguindo para instalação...
+echo ================================================
+echo.
+
+REM Selecionar porta COM
+call :SELECT_COM_PORT
+
+REM Verificar se o usuário escolheu abortar
+if "%SELECTED_PORT%"=="ABORT" (
+    echo Operação cancelada pelo usuário.
+    pause
+    goto MENU
+)
+
+REM Flashar o dispositivo
+echo Instalando o software no dispositivo...
+if "%SELECTED_PORT%"=="" (
+    idf.py flash monitor
+) else (
+    idf.py -p %SELECTED_PORT% flash monitor
+)
+
+REM Após a conclusão, retornar ao menu
+pause
+goto MENU
+
+:PROCEED_WITH_INSTALL
+REM Inicializar o ambiente do ESP-IDF
+echo.
+echo Inicializando o ambiente do ESP-IDF na versão %SELECTED_IDF_VERSION%...
+
+REM Definir arquivo temporário para captura da saída de export.bat
+set "EXPORT_LOG=%TEMP%\esp_export_log.txt"
+call "%IDF_PATH%\export.bat" > "%EXPORT_LOG%" 2>&1
+set EXPORT_ERRORLEVEL=%ERRORLEVEL%
+
+REM Verificar se ocorreu erro de ambiente python não encontrado
+findstr /C:"ESP-IDF Python virtual environment not found" "%EXPORT_LOG%" >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo Ambiente python ESP-IDF não encontrado, executando install.bat...
+    call "%IDF_PATH%\install.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao instalar o ambiente Python.
+        pause
+        goto MENU
+    )
+    REM Tentar export.bat novamente após instalação
+    call "%IDF_PATH%\export.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao inicializar o ambiente ESP-IDF mesmo após instalar Python.
         pause
         goto MENU
     )
@@ -791,16 +1379,6 @@ del "%EXPORT_LOG%" 2>nul
 REM Verificar se a inicialização foi bem-sucedida
 if errorlevel 1 (
     echo Falha ao inicializar o ambiente do ESP-IDF.
-    pause
-    goto MENU
-)
-
-REM Navegar para a pasta Jade
-cd /d "%cd%\Jade"
-
-REM Verificar se os binários existem
-if not exist "%cd%\bin_jade\bootloader.bin" (
-    echo Os binários não foram encontrados. Certifique-se de que você compilou o projeto primeiro.
     pause
     goto MENU
 )
