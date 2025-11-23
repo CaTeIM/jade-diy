@@ -478,6 +478,10 @@ set "JADE_REPO_URL=https://github.com/Blockstream/Jade.git"
 
 if exist "%JADE_REPO_DIR%" (
     echo O repositório Jade já foi clonado na pasta %JADE_REPO_DIR%. Pulando clonagem...
+    
+    REM Verificar e configurar safe.directory mesmo se já existir
+    echo Configurando repositório como safe directory...
+    git config --global --add safe.directory "%JADE_REPO_DIR%" 2>nul
 ) else (
     echo Clonando o repositório Jade...
     git clone --recursive %JADE_REPO_URL%
@@ -485,6 +489,15 @@ if exist "%JADE_REPO_DIR%" (
         echo Falha ao clonar o repositório Jade. Verifique sua conexão e tente novamente.
         pause
         goto MENU
+    )
+    
+    REM Configurar o diretório como seguro imediatamente após o clone
+    echo Configurando repositório como safe directory...
+    git config --global --add safe.directory "%JADE_REPO_DIR%"
+    if %ERRORLEVEL% neq 0 (
+        echo AVISO: Não foi possível configurar safe.directory, mas o clone foi bem-sucedido.
+    ) else (
+        echo Repositório configurado como seguro.
     )
 )
 
@@ -550,6 +563,21 @@ if %ERRORLEVEL% neq 0 (
     echo Arquivo de configuração copiado e renomeado com sucesso.
 )
 
+REM Aplicar configuração de 16MB para TTGO T-Display
+if /I "%SELECTED_CONFIG%"=="sdkconfig_display_ttgo_tdisplay.defaults" (
+    echo.
+    echo Aplicando configuração de flash 16MB para TTGO T-Display...
+    
+    setlocal enabledelayedexpansion
+    set "SDKCONFIG_DEFAULTS=%JADE_REPO_DIR%\sdkconfig.defaults"
+    
+    REM Substituir 4MB por 16MB diretamente
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "(Get-Content '!SDKCONFIG_DEFAULTS!') -replace 'CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y', 'CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y' | Set-Content '!SDKCONFIG_DEFAULTS!'"
+    
+    echo Flash size configurado para 16MB.
+    endlocal
+)
+
 REM Aplicar configuração específica para Waveshare S3 Touch LCD2
 if /I "%SELECTED_CONFIG%"=="sdkconfig_display_waveshares3_touch_lcd2.defaults" (
     echo.
@@ -587,7 +615,7 @@ REM -------------------------------------------------------------
 
 REM Verificar se a pasta Jade existe
 if not exist "%~dp0Jade" (
-    echo A pasta Jade não foi encontrada. Certifique-se de que você executou as opções 2 e 3 primeiro.
+    echo A pasta Jade não foi encontrada. Certifique-se de que você executou a opção 2 primeiro.
     pause
     goto MENU
 )
@@ -595,9 +623,10 @@ if not exist "%~dp0Jade" (
 echo.
 echo Por favor, selecione uma opção:
 echo.
-echo [1] Compilar
-echo [2] Compilar e Instalar
-echo [3] Instalar (já compilado)
+echo [1] Compilar (limpeza completa)
+echo [2] Compilar incremental (mais rápido)
+echo [3] Compilar e Instalar
+echo [4] Instalar (já compilado)
 echo.
 echo [0] Retornar ao menu principal
 echo.
@@ -614,8 +643,10 @@ if "%INSTALL_OPTION%"=="" (
 if "%INSTALL_OPTION%"=="1" (
     goto COMPILE
 ) else if "%INSTALL_OPTION%"=="2" (
-    goto COMPILE_AND_INSTALL
+    goto COMPILE_INCREMENTAL
 ) else if "%INSTALL_OPTION%"=="3" (
+    goto COMPILE_AND_INSTALL
+) else if "%INSTALL_OPTION%"=="4" (
     goto INSTALL_ONLY
 ) else if "%INSTALL_OPTION%"=="0" (
     goto MENU
@@ -701,7 +732,8 @@ if defined IDF_PYTHON (
 REM Navegar para a pasta Jade
 cd /d "%cd%\Jade"
 
-REM Limpar o diretório de build para evitar conflitos
+REM Limpar o diretório de build para evitar conflitos (FULLCLEAN)
+echo Limpando build anterior (fullclean)...
 idf.py fullclean
 
 REM Compilar o projeto
@@ -724,11 +756,105 @@ copy /y "build\partition_table\partition-table.bin" "bin_jade\"
 
 echo Binários extraídos com sucesso.
 
-if "%SELECTED_PORT%"=="ABORT" (
-    echo Operação cancelada pelo usuário.
+REM Após a conclusão, retornar ao menu
+pause
+goto MENU
+
+:COMPILE_INCREMENTAL
+call :SELECT_IDF_VERSION
+
+REM Verificar se o export.bat existe na versão selecionada
+if not exist "%IDF_PATH%\export.bat" (
+    echo O arquivo export.bat não foi encontrado na pasta %IDF_PATH%.
     pause
     goto MENU
 )
+
+REM Inicializar o ambiente do ESP-IDF
+echo Inicializando o ambiente do ESP-IDF na versão %SELECTED_IDF_VERSION%...
+
+REM Definir arquivo temporário para captura da saída de export.bat
+set "EXPORT_LOG=%TEMP%\esp_export_log.txt"
+call "%IDF_PATH%\export.bat" > "%EXPORT_LOG%" 2>&1
+set EXPORT_ERRORLEVEL=%ERRORLEVEL%
+
+REM Verificar se ocorreu erro de ambiente python não encontrado
+findstr /C:"ESP-IDF Python virtual environment not found" "%EXPORT_LOG%" >nul 2>&1
+if %ERRORLEVEL% EQU 0 (
+    echo Ambiente python ESP-IDF não encontrado, executando install.bat...
+    call "%IDF_PATH%\install.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao instalar o ambiente Python.
+        pause
+        goto MENU
+    )
+    REM Tentar export.bat novamente após instalação
+    call "%IDF_PATH%\export.bat"
+    if ERRORLEVEL 1 (
+        echo Falha ao inicializar o ambiente ESP-IDF mesmo após instalar Python.
+        pause
+        goto MENU
+    )
+) else (
+    if %EXPORT_ERRORLEVEL% NEQ 0 (
+        echo Falha ao inicializar o ambiente ESP-IDF.
+        pause
+        goto MENU
+    )
+)
+
+del "%EXPORT_LOG%" 2>nul
+
+REM Verificar se a inicialização foi bem-sucedida
+if errorlevel 1 (
+    echo Falha ao inicializar o ambiente do ESP-IDF.
+    pause
+    goto MENU
+)
+
+REM Criar python3 no ambiente Python do ESP-IDF
+echo Configurando alias python3...
+for /f "delims=" %%I in ('where python') do (
+    set "IDF_PYTHON=%%I"
+    goto :FOUND_IDF_PYTHON_INCREMENTAL
+)
+:FOUND_IDF_PYTHON_INCREMENTAL
+if defined IDF_PYTHON (
+    for %%D in ("!IDF_PYTHON!") do set "IDF_PYTHON_DIR=%%~dpD"
+    if not exist "!IDF_PYTHON_DIR!python3.exe" (
+        copy /y "!IDF_PYTHON!" "!IDF_PYTHON_DIR!python3.exe" > NUL 2>&1
+        if !ERRORLEVEL! equ 0 (
+            echo Alias python3 criado com sucesso.
+        ) else (
+            echo Aviso: Não foi possível criar alias python3.
+        )
+    ) else (
+        echo Alias python3 já existe.
+    )
+)
+
+REM Navegar para a pasta Jade
+cd /d "%cd%\Jade"
+
+REM Compilar o projeto (INCREMENTAL - SEM fullclean, usando cache)
+echo Compilando o projeto (incremental - usando cache)...
+idf.py build
+if %ERRORLEVEL% neq 0 (
+    echo Falha na compilação do projeto.
+    pause
+    goto MENU
+)
+
+REM Extrair os binários após a compilação
+echo Extraindo binários...
+if not exist "%cd%\bin_jade" mkdir "%cd%\bin_jade"
+
+copy /y "build\bootloader\bootloader.bin" "bin_jade\"
+copy /y "build\jade.bin" "bin_jade\"
+copy /y "build\ota_data_initial.bin" "bin_jade\"
+copy /y "build\partition_table\partition-table.bin" "bin_jade\"
+
+echo Binários extraídos com sucesso.
 
 REM Após a conclusão, retornar ao menu
 pause
@@ -846,9 +972,9 @@ if "%SELECTED_PORT%"=="ABORT" (
 REM Flashar o dispositivo
 echo Instalando o software no dispositivo...
 if "%SELECTED_PORT%"=="" (
-    idf.py flash monitor
+    idf.py flash
 ) else (
-    idf.py -p %SELECTED_PORT% flash monitor
+    idf.py -p %SELECTED_PORT% flash
 )
 
 REM Após a conclusão, retornar ao menu
@@ -887,7 +1013,7 @@ if not exist "%cd%\bin_jade\bootloader.bin" (
 REM Verificar qual configuração foi usada
 echo.
 echo ================================================
-echo   Verificando informações da compilação
+echo Verificando informações da compilação
 echo ================================================
 echo.
 
@@ -897,76 +1023,11 @@ set "CONFIG_DETECTED=Não identificada"
 if exist "%SDKCONFIG_FILE%" (
     echo Analisando sdkconfig.defaults...
     
-    REM Detectar tipo de placa baseado em CONFIG_BOARD_TYPE_
-    findstr /C:"CONFIG_BOARD_TYPE_JADE=y" "%SDKCONFIG_FILE%" >nul 2>&1
-    if !ERRORLEVEL! EQU 0 (
-        set "CONFIG_DETECTED=Blockstream Jade v1 (wheel)"
-    ) else (
-        findstr /C:"CONFIG_BOARD_TYPE_JADE_V1_1=y" "%SDKCONFIG_FILE%" >nul 2>&1
-        if !ERRORLEVEL! EQU 0 (
-            set "CONFIG_DETECTED=Blockstream Jade v1.1 (rocker)"
-        ) else (
-            findstr /C:"CONFIG_BOARD_TYPE_JADE_V2=y" "%SDKCONFIG_FILE%" >nul 2>&1
-            if !ERRORLEVEL! EQU 0 (
-                set "CONFIG_DETECTED=Blockstream Jade v2 (esp32s3)"
-            ) else (
-                findstr /C:"CONFIG_BOARD_TYPE_M5_FIRE=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                if !ERRORLEVEL! EQU 0 (
-                    set "CONFIG_DETECTED=M5Stack Fire"
-                ) else (
-                    findstr /C:"CONFIG_BOARD_TYPE_M5_BLACK_GRAY=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                    if !ERRORLEVEL! EQU 0 (
-                        set "CONFIG_DETECTED=M5Stack Black/Gray"
-                    ) else (
-                        findstr /C:"CONFIG_BOARD_TYPE_M5_CORE2=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                        if !ERRORLEVEL! EQU 0 (
-                            set "CONFIG_DETECTED=M5Stack Core 2"
-                        ) else (
-                            findstr /C:"CONFIG_BOARD_TYPE_M5_CORES3=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                            if !ERRORLEVEL! EQU 0 (
-                                set "CONFIG_DETECTED=M5Stack Core S3"
-                            ) else (
-                                findstr /C:"CONFIG_BOARD_TYPE_M5_STICKC_PLUS=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                                if !ERRORLEVEL! EQU 0 (
-                                    set "CONFIG_DETECTED=M5StickC Plus"
-                                ) else (
-                                    findstr /C:"CONFIG_BOARD_TYPE_M5_STICKC_PLUS_2=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                                    if !ERRORLEVEL! EQU 0 (
-                                        set "CONFIG_DETECTED=M5StickC Plus 2"
-                                    ) else (
-                                        findstr /C:"CONFIG_BOARD_TYPE_TTGO_TDISPLAY=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                                        if !ERRORLEVEL! EQU 0 (
-                                            set "CONFIG_DETECTED=TTGO T-Display"
-                                        ) else (
-                                            findstr /C:"CONFIG_BOARD_TYPE_TTGO_TDISPLAYS3=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                                            if !ERRORLEVEL! EQU 0 (
-                                                set "CONFIG_DETECTED=TTGO T-Display S3"
-                                            ) else (
-                                                findstr /C:"CONFIG_BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                                                if !ERRORLEVEL! EQU 0 (
-                                                    set "CONFIG_DETECTED=TTGO T-Display S3 Pro Camera"
-                                                ) else (
-                                                    findstr /C:"CONFIG_BOARD_TYPE_TTGO_TWATCHS3=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                                                    if !ERRORLEVEL! EQU 0 (
-                                                        set "CONFIG_DETECTED=TTGO T-Watch S3"
-                                                    ) else (
-                                                        findstr /C:"CONFIG_BOARD_TYPE_WS_TOUCH_LCD2=y" "%SDKCONFIG_FILE%" >nul 2>&1
-                                                        if !ERRORLEVEL! EQU 0 (
-                                                            set "CONFIG_DETECTED=Waveshare S3 Touch LCD 2"
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    )
+    REM Detectar tipo de placa usando PowerShell (OTIMIZADO - 5x mais rápido)
+    for /f "usebackq delims=" %%i in (`powershell -NoProfile -ExecutionPolicy Bypass -Command "$content = Get-Content '%SDKCONFIG_FILE%' -Raw; switch -Regex ($content) { 'CONFIG_BOARD_TYPE_JADE=y' { 'Blockstream Jade v1 (wheel)'; break } 'CONFIG_BOARD_TYPE_JADE_V1_1=y' { 'Blockstream Jade v1.1 (rocker)'; break } 'CONFIG_BOARD_TYPE_JADE_V2=y' { 'Blockstream Jade v2 (esp32s3)'; break } 'CONFIG_BOARD_TYPE_M5_FIRE=y' { 'M5Stack Fire'; break } 'CONFIG_BOARD_TYPE_M5_BLACK_GRAY=y' { 'M5Stack Black/Gray'; break } 'CONFIG_BOARD_TYPE_M5_CORE2=y' { 'M5Stack Core 2'; break } 'CONFIG_BOARD_TYPE_M5_CORES3=y' { 'M5Stack Core S3'; break } 'CONFIG_BOARD_TYPE_M5_STICKC_PLUS=y' { 'M5StickC Plus'; break } 'CONFIG_BOARD_TYPE_M5_STICKC_PLUS_2=y' { 'M5StickC Plus 2'; break } 'CONFIG_BOARD_TYPE_TTGO_TDISPLAY=y' { 'TTGO T-Display'; break } 'CONFIG_BOARD_TYPE_TTGO_TDISPLAYS3=y' { 'TTGO T-Display S3'; break } 'CONFIG_BOARD_TYPE_TTGO_TDISPLAYS3PROCAMERA=y' { 'TTGO T-Display S3 Pro Camera'; break } 'CONFIG_BOARD_TYPE_TTGO_TWATCHS3=y' { 'TTGO T-Watch S3'; break } 'CONFIG_BOARD_TYPE_WS_TOUCH_LCD2=y' { 'Waveshare S3 Touch LCD 2'; break } default { 'Não identificada' } }" 2^>nul`) do set "CONFIG_DETECTED=%%i"
+    
+    REM Fallback caso PowerShell falhe
+    if "!CONFIG_DETECTED!"=="" set "CONFIG_DETECTED=Não identificada"
     
     echo Configuração detectada: !CONFIG_DETECTED!
 ) else (
@@ -1059,6 +1120,21 @@ if %ERRORLEVEL% neq 0 (
     goto MENU
 ) else (
     echo Configuração copiada com sucesso.
+)
+
+REM Aplicar configuração de 16MB para TTGO T-Display
+if /I "%NEW_SELECTED_CONFIG%"=="sdkconfig_display_ttgo_tdisplay.defaults" (
+    echo.
+    echo Aplicando configuração de flash 16MB para TTGO T-Display...
+    
+    setlocal enabledelayedexpansion
+    set "SDKCONFIG_DEFAULTS=%cd%\sdkconfig.defaults"
+    
+    REM Substituir 4MB por 16MB diretamente
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "(Get-Content '!SDKCONFIG_DEFAULTS!') -replace 'CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y', 'CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y' | Set-Content '!SDKCONFIG_DEFAULTS!'"
+    
+    echo Flash size configurado para 16MB.
+    endlocal
 )
 
 REM Aplicar configuração específica para Waveshare S3 Touch LCD2
@@ -1194,13 +1270,25 @@ if defined IDF_PYTHON (
     )
 )
 
+REM ============================================================
+REM IMPORTANTE: Deletar sdkconfig antigo para forçar regeneração
+REM ============================================================
+if exist "%cd%\sdkconfig" (
+    echo Removendo sdkconfig antigo...
+    del /f /q "%cd%\sdkconfig"
+)
+if exist "%cd%\sdkconfig.old" (
+    del /f /q "%cd%\sdkconfig.old"
+)
+REM ============================================================
+
 REM Limpar o diretório de build
 echo Limpando build anterior...
 idf.py fullclean
 
 REM Compilar o projeto
 echo Compilando o projeto...
-idf.py build
+idf.py build 2>&1
 if %ERRORLEVEL% neq 0 (
     echo Falha na compilação do projeto.
     pause
@@ -1288,13 +1376,25 @@ if defined IDF_PYTHON (
     )
 )
 
+REM ============================================================
+REM IMPORTANTE: Deletar sdkconfig antigo para forçar regeneração
+REM ============================================================
+if exist "%cd%\sdkconfig" (
+    echo Removendo sdkconfig antigo...
+    del /f /q "%cd%\sdkconfig"
+)
+if exist "%cd%\sdkconfig.old" (
+    del /f /q "%cd%\sdkconfig.old"
+)
+REM ============================================================
+
 REM Limpar o diretório de build
 echo Limpando build anterior...
 idf.py fullclean
 
 REM Compilar o projeto
 echo Compilando o projeto...
-idf.py build
+idf.py build 2>&1
 if %ERRORLEVEL% neq 0 (
     echo Falha na compilação do projeto.
     pause
@@ -1330,9 +1430,9 @@ if "%SELECTED_PORT%"=="ABORT" (
 REM Flashar o dispositivo
 echo Instalando o software no dispositivo...
 if "%SELECTED_PORT%"=="" (
-    idf.py flash monitor
+    idf.py flash
 ) else (
-    idf.py -p %SELECTED_PORT% flash monitor
+    idf.py -p %SELECTED_PORT% flash
 )
 
 REM Após a conclusão, retornar ao menu
@@ -1393,12 +1493,78 @@ if "%SELECTED_PORT%"=="ABORT" (
     goto MENU
 )
 
+REM ============================================================
+REM VERIFICAÇÃO: Detectar compatibilidade de chip
+REM ============================================================
+echo.
+echo Verificando compatibilidade do chip...
+
+REM Detectar chip do build (do CMakeCache.txt)
+set "BUILD_CHIP=unknown"
+if exist "%cd%\build\CMakeCache.txt" (
+    for /f "tokens=2 delims==" %%i in ('findstr /C:"IDF_TARGET:STRING=" "%cd%\build\CMakeCache.txt" 2^>nul') do set "BUILD_CHIP=%%i"
+)
+
+echo Build compilado para: %BUILD_CHIP%
+
+REM Detectar chip conectado (usando esptool)
+set "CONNECTED_CHIP=unknown"
+if not "%SELECTED_PORT%"=="" (
+    echo Detectando chip conectado na porta %SELECTED_PORT%...
+    
+    REM Usar read_mac diretamente - mais confiável
+    for /f "tokens=*" %%i in ('python -m esptool --port %SELECTED_PORT% read_mac 2^>^&1') do (
+        echo %%i | findstr /C:"Chip is" >nul
+        if !ERRORLEVEL! EQU 0 (
+            echo %%i | findstr /C:"ESP32-S3" >nul && set "CONNECTED_CHIP=esp32s3"
+            echo %%i | findstr /C:"ESP32-S2" >nul && set "CONNECTED_CHIP=esp32s2"
+            echo %%i | findstr /C:"ESP32-C3" >nul && set "CONNECTED_CHIP=esp32c3"
+            echo %%i | findstr /C:"ESP32-C6" >nul && set "CONNECTED_CHIP=esp32c6"
+            echo %%i | findstr /C:"ESP32-H2" >nul && set "CONNECTED_CHIP=esp32h2"
+            if "!CONNECTED_CHIP!"=="unknown" (
+                echo %%i | findstr /C:"ESP32" >nul && set "CONNECTED_CHIP=esp32"
+            )
+        )
+    )
+    echo Chip conectado: %CONNECTED_CHIP%
+)
+
+REM Comparar chips
+if not "%BUILD_CHIP%"=="%CONNECTED_CHIP%" (
+    if not "%CONNECTED_CHIP%"=="unknown" (
+        echo.
+        echo ================================================
+        echo AVISO: INCOMPATIBILIDADE DETECTADA!
+        echo ================================================
+        echo.
+        echo Build compilado para: %BUILD_CHIP%
+        echo Chip conectado:       %CONNECTED_CHIP%
+        echo.
+        echo O firmware foi compilado para um chip diferente
+        echo do que está conectado. Isso causará erro ao flashear.
+        echo.
+        echo Recomendação: Recompile com a configuração correta.
+        echo.
+        choice /C RC /M "Deseja [R]ecompilar agora ou [C]ancelar"
+        if errorlevel 2 (
+            echo Operação cancelada.
+            pause
+            goto MENU
+        )
+        REM Voltar para trocar configuração
+        goto CHANGE_CONFIG_FOR_INSTALL
+    )
+)
+
+echo Chips compatíveis. Prosseguindo com instalação...
+REM ============================================================
+
 REM Flashar o dispositivo
 echo Instalando o software no dispositivo...
 if "%SELECTED_PORT%"=="" (
-    idf.py flash monitor
+    idf.py flash
 ) else (
-    idf.py -p %SELECTED_PORT% flash monitor
+    idf.py -p %SELECTED_PORT% flash
 )
 
 REM Após a conclusão, retornar ao menu
