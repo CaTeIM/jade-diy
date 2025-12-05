@@ -59,7 +59,19 @@ REM -------------------------------------------------------------
 REM Buscar versão recomendada de ESP-IDF pelo projeto Jade
 echo Buscando versão recomendada do ESP-IDF...
 set "DEFAULT_VERSION=5.4"
-powershell -Command "try { $content = (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Blockstream/Jade/master/.github/workflows/github-actions-test.yml' -UseBasicParsing).Content; if($content -match 'esp_idf_version:\s*[''\""]?v?([0-9.]+)[''\""]?') { Write-Output $matches[1] } else { Write-Output '5.4' } } catch { Write-Output '5.4' }" > temp_version.txt 2>NUL
+
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+"try { ^
+    $content = (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Blockstream/Jade/master/main/idf_component.yml' -UseBasicParsing).Content; ^
+    if($content -match 'idf:\s*[\"'']?>=?([0-9]+\.[0-9]+)') { ^
+        Write-Output $matches[1] ^
+    } elseif($content -match 'version:\s*[\"'']?>=?([0-9]+\.[0-9]+)') { ^
+        Write-Output $matches[1] ^
+    } else { ^
+        Write-Output '5.4' ^
+    } ^
+} catch { Write-Output '5.4' }" > temp_version.txt 2>NUL
+
 set /p DEFAULT_VERSION=<temp_version.txt
 del temp_version.txt 2>NUL
 if "%DEFAULT_VERSION%"=="" set "DEFAULT_VERSION=5.4"
@@ -67,9 +79,9 @@ if "%DEFAULT_VERSION%"=="" set "DEFAULT_VERSION=5.4"
 echo.
 echo Versão padrão do ESP-IDF: %DEFAULT_VERSION%
 echo.
-powershell -Command "$releases = (Invoke-WebRequest -Uri 'https://api.github.com/repos/espressif/idf-installer/releases' -UseBasicParsing | ConvertFrom-Json); $offline = $releases | Where-Object { $_.tag_name -like 'offline-*' } | Select-Object -First 5; $i=1; foreach($r in $offline) { $v = $r.tag_name -replace 'offline-',''; Write-Host \"  [$i] $v\"; $i++ }"
+powershell -Command "$releases = (Invoke-WebRequest -Uri 'https://api.github.com/repos/espressif/idf-installer/releases' -UseBasicParsing | ConvertFrom-Json); $offline = $releases | Where-Object { $_.tag_name -like 'offline-*' } | Select-Object -First 5; $i=1; foreach($r in $offline) { $v = $r.tag_name -replace 'offline-',''; Write-Host \" [$i] $v\"; $i++ }"
 echo.
-set /p ESP_IDF_VERSION=Digite a versão do ESP-IDF (pressione Enter para usar %DEFAULT_VERSION%):
+set /p ESP_IDF_VERSION=Digite a versão do ESP-IDF (pressione Enter para usar %DEFAULT_VERSION%): 
 
 REM Usar a versão padrão se o usuário não inserir uma versão
 if "%ESP_IDF_VERSION%"=="" (
@@ -135,9 +147,8 @@ REM Passo 2: Verificar e instalar o Python automaticamente
 echo.
 echo Verificando o Python...
 
-REM Definir variáveis do Python
-set "PYTHON_INSTALLER=python-3.11.5-amd64.exe"
-set "PYTHON_URL=https://www.python.org/ftp/python/3.11.5/%PYTHON_INSTALLER%"
+REM Definir versão do Python
+set "PYTHON_VERSION=3.13.0"
 
 python --version > NUL 2>&1
 
@@ -146,42 +157,67 @@ set "INSTALL_PYTHON=YES"
 
 if %ERRORLEVEL% equ 0 (
     set "PYTHON_ALREADY_INSTALLED=YES"
-    for /f "tokens=2" %%v in ('python --version 2^>^&1') do set "PYTHON_VERSION=%%v"
+    for /f "tokens=2" %%v in ('python --version 2^>^&1') do set "CURRENT_PYTHON_VERSION=%%v"
 )
 
 if "%PYTHON_ALREADY_INSTALLED%"=="YES" (
-    echo Python !PYTHON_VERSION! já está instalado.
+    echo Python !CURRENT_PYTHON_VERSION! já está instalado.
     echo.
     choice /C SN /M "Deseja reinstalar o Python"
     if errorlevel 2 set "INSTALL_PYTHON=NO"
 )
 
-if "%INSTALL_PYTHON%"=="NO" (
-    echo Pulando instalação do Python.
+if "%INSTALL_PYTHON%"=="NO" goto SKIP_PYTHON_INSTALL
+
+if "%PYTHON_ALREADY_INSTALLED%"=="YES" (
+    echo Prosseguindo com a reinstalação...
 ) else (
-    if "%PYTHON_ALREADY_INSTALLED%"=="YES" (
-        echo Prosseguindo com a reinstalação...
-    ) else (
-        echo Python não foi detectado. Procedendo com a instalação...
-    )
-
-    if exist "%PYTHON_INSTALLER%" (
-        echo O instalador do Python já existe. Pulando download...
-    ) else (
-        echo Baixando o instalador do Python...
-        powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-BitsTransfer -Source '%PYTHON_URL%' -Destination '%PYTHON_INSTALLER%' -Description 'Python Installer' -DisplayName 'Baixando Python'"
-        echo Download concluído.
-    )
-
-    echo Instalando o Python...
-    "%PYTHON_INSTALLER%" /passive InstallAllUsers=1 PrependPath=1 Include_test=0
-    if !ERRORLEVEL! neq 0 (
-        echo Falha na instalação do Python.
-        pause
-        goto MENU
-    )
-    echo Python instalado com sucesso.
+    echo Python não foi detectado. Procedendo com a instalação...
 )
+
+REM Detectar arquitetura e escolher versão
+echo.
+echo Selecione a arquitetura do Python:
+echo.
+echo [1] x64 (AMD64) - Recomendado para maioria dos PCs
+echo [2] ARM64 - Para processadores ARM
+echo [3] x86 (32-bit) - Compatibilidade máxima
+echo.
+
+set "ARCH_CHOICE=1"
+set /p ARCH_CHOICE=Digite sua escolha (1-3) [padrao: 1]: 
+
+REM Definir instalador baseado na escolha (SEM IF ANINHADOS)
+set "PYTHON_INSTALLER=python-%PYTHON_VERSION%-amd64.exe"
+if "!ARCH_CHOICE!"=="2" set "PYTHON_INSTALLER=python-%PYTHON_VERSION%-arm64.exe"
+if "!ARCH_CHOICE!"=="3" set "PYTHON_INSTALLER=python-%PYTHON_VERSION%.exe"
+
+set "PYTHON_URL=https://www.python.org/ftp/python/%PYTHON_VERSION%/!PYTHON_INSTALLER!"
+
+echo.
+echo Instalador selecionado: !PYTHON_INSTALLER!
+echo.
+
+if exist "!PYTHON_INSTALLER!" (
+    echo O instalador do Python já existe. Pulando download...
+    goto INSTALL_PYTHON_NOW
+)
+
+echo Baixando o instalador do Python...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-BitsTransfer -Source '!PYTHON_URL!' -Destination '!PYTHON_INSTALLER!' -Description 'Python Installer' -DisplayName 'Baixando Python'"
+echo Download concluído.
+
+:INSTALL_PYTHON_NOW
+echo Instalando o Python...
+"!PYTHON_INSTALLER!" /passive InstallAllUsers=1 PrependPath=1 Include_test=0
+if !ERRORLEVEL! neq 0 (
+    echo Falha na instalação do Python.
+    pause
+    goto MENU
+)
+echo Python instalado com sucesso.
+
+:SKIP_PYTHON_INSTALL
 
 REM Passo 3: Verificar e instalar o Git
 echo.
