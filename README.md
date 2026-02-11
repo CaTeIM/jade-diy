@@ -94,7 +94,7 @@ Pronto! A partir de agora, sua carteira estará configurada no Blockstream para 
 
 ## 🛒 Ainda não tem uma Jade Wallet? **ADQUIRA JÁ!**
 
-Compre em nossa loja parceira <span><a href="https://pixgo.org/loja/jade-wallet">PixGO <img src="https://pixgo.org/imgs/logo.png" width="50" align="absmiddle"/></a></span>
+Compre na loja <span><a href="https://jadewallet.com.br">Wallet Store <img src="https://pixgo.org/imgs/logo.png" width="50" align="absmiddle"/></a></span>
 
 ---
 **Este guia é um documento vivo, fruto de uma jornada de debugging e colaboração. Que ele sirva para fortalecer a comunidade de entusiastas que, como você, constroem a própria soberania. Agora você tem em mãos não apenas uma carteira, mas o conhecimento para dominá-la. Com essas soluções, sua Jade Wallet está pronta para proteger seus satoshis com segurança em qualquer plataforma.**
